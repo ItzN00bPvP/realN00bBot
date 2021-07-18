@@ -32,7 +32,7 @@ def getapilevelbyid(discordid: int):
     if r.status_code == 200:
         return True, r.json()['User']['AdminLevel']
     elif r.status_code == 400:
-        return False, "You dont have a API-Key yet."
+        return False, "You don't have a API-Key yet."
     return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
 
 
