@@ -30,7 +30,7 @@ class Microboinc(commands.Cog):
     async def _microboinc_createapikay(self, ctx: SlashContext, nickname: str, user: discord.Member = None):
         apifor = ctx.author
         if user is not None and user != ctx.author:
-            if mattapi.isapilevelbyid(ctx.author_id, 2):
+            if not mattapi.isapilevelbyid(ctx.author_id, 2):
                 await notauthorized(ctx)
                 return
             apifor = user
