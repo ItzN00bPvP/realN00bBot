@@ -1,9 +1,12 @@
 import discord
+from time import time
 from discord.ext import commands
 from discord_slash import cog_ext, SlashContext
-from discord_slash.utils.manage_commands import create_option
+from discord_slash.utils.manage_commands import create_option, create_choice
 
-from utils import mattapi
+from main import notauthorized
+from utils import mattapi, chards
+from config.config import rootdir, apikeyselfcreationisallowed
 
 
 class Microboinc(commands.Cog):
@@ -26,11 +29,15 @@ class Microboinc(commands.Cog):
     ])
     async def _microboinc_createapikay(self, ctx: SlashContext, nickname: str, user: discord.Member = None):
         apifor = ctx.author
-        if user is not None:
-            # check if user has api 2+
-            await ctx.send("Not implemented yet!")
+        if user is not None and user != ctx.author:
+            if mattapi.isapilevelbyid(ctx.author_id, 2):
+                await notauthorized(ctx)
+                return
             apifor = user
-            return
+        else:
+            if not apikeyselfcreationisallowed:
+                await ctx.send("This feature is currently disabled!")
+                return
 
         success, res = mattapi.register(nickname, apifor.id)
         if not success:
@@ -40,13 +47,91 @@ class Microboinc(commands.Cog):
         apikey = res
         try:
             await apifor.send(content=f"Microboinc account created:\nNickname: {nickname}\nAPI-Key: {apikey}")
-            await ctx.send(content=f"API for {nickname}({apifor.mention}) created and send to their DMs.")
+            await ctx.send(content=f"API-Key for {nickname}({apifor.mention}) created and send to their DMs.")
         except discord.Forbidden:
-            await ctx.send(hidden=True, content=f"!Coun't send API-Key to DMS!\n"
+            await ctx.send(hidden=True, content=f"!Couldn't send API-Key to DMS!\n"
                                                 f"!THIS MESSAGE IS ONLY VISIBLE TO YOU!\n"
                                                 f"Microboinc account created for {apifor.mention}:\n"
                                                 f"Nickname: {nickname}\n"
                                                 f"API-Key: {apikey}")
+
+    @cog_ext.cog_subcommand(base="microboinc", name="deletebyid", options=[
+        create_option(
+            name="user",
+            description="The User you want to delete.",
+            option_type=6,
+            required=True
+        )
+    ])
+    async def _microboinc_deletebyid(self, ctx: SlashContext, user: discord.Member):
+        if not mattapi.isapilevelbyid(ctx.author_id, 3):
+            await notauthorized(ctx)
+            return
+
+        success, res = mattapi.deletebyid(user.id)
+
+        if not success:
+            await ctx.send("Something went wrong:\n" + res)
+            return
+
+        await ctx.send(content=f"User({user.mention}) has been deleted.")
+
+    @cog_ext.cog_subcommand(base="microboinc", name="results", options=[
+        create_option(
+            name="appid",
+            description="The appid form microboinc.",
+            option_type=3,
+            required=True
+        )
+    ])
+    async def _microboinc_results(self, ctx: SlashContext, appid: int):
+        if not mattapi.isapilevelbyid(ctx.author_id, 1):
+            await notauthorized(ctx)
+            return
+
+        fname = f'{rootdir}/results/{int(time())}_results{appid}.txt'
+        suc, res = mattapi.getresultsbyappid(appid)
+        if not suc:
+            await ctx.send(f"Something went wrong: {res}")
+            return
+
+        f = open(fname, "w")
+        f.write(res)
+        f.close()
+
+        await ctx.send(f"Here are the results for app: {appid}", files=[discord.File(fname)])
+
+    @cog_ext.cog_subcommand(base="microboinc", name="leaderboard", options=[
+        create_option(
+            name="projectid",
+            description="The ID from the project you want the leaderboard from!",
+            option_type=4,
+            required=True
+        ), create_option(
+            name="type",
+            description="The type of chard you want!",
+            option_type=3,
+            required=False,
+            choices=[
+                create_choice(
+                    name="Graph",
+                    value="1"
+                ),
+                create_choice(
+                    name="Pie",
+                    value="2"
+                )
+            ]
+        )
+    ])
+    async def _microboinc_leaderboard(self, ctx: SlashContext, projectid: int, type: str = "1"):
+        fname = f'{rootdir}/leaderboards/{int(time())}_leaderboard{projectid}.png'
+
+        if type == "1":
+            chards.graph(fname, mattapi.getleaderdb(projectid))
+        elif type == "2":
+            chards.pie(fname, mattapi.getleaderdb(projectid))
+        await ctx.send(content=f"The current Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
 
 def setup(bot):

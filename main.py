@@ -8,6 +8,11 @@ bot = commands.Bot(command_prefix="mb!")
 slash = SlashCommand(bot, sync_commands=True, sync_on_cog_reload=True)
 
 
+async def notauthorized(ctx):
+    await ctx.send("You're not authorized!\ncc: <@374245848659263488>")
+    return
+
+
 @bot.event
 async def on_ready():
     print("Bot running: " + str(bot.user))
@@ -21,6 +26,7 @@ def load_cogs(bot, cogs: list):
 
 load_cogs(bot,
           [
+              "cogs.admin",
               "cogs.microboinc"
           ])
 bot.run(bottoken)
