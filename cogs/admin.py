@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 from discord_slash import cog_ext, SlashContext
 from discord_slash.utils.manage_commands import create_option
@@ -21,7 +22,10 @@ class Slash(commands.Cog):
         if not ctx.author_id == 374245848659263488:
             await notauthorized(ctx)
             return
-        self.bot.unload_extension(cog)
+        try:
+            self.bot.unload_extension(cog)
+        except discord.ext.commands.errors.ExtensionNotLoaded:
+            pass
         self.bot.load_extension(cog)
         await ctx.send(f"Reloaded cog: {cog}")
 
