@@ -6,7 +6,7 @@ header = {'Authorization': mattapikey, 'user-agent': 'microboinc Bot/0.0.1'}
 
 
 def register(nickname: str, discordid: int):
-    r = requests.post(url=f"{miniboincapi_host}/register", headers=header,
+    r = requests.post(url=f"{miniboincapi_host}/accounts/register", headers=header,
                       json={
                           "User": {
                               "Username": f"{nickname}",
@@ -24,7 +24,7 @@ def register(nickname: str, discordid: int):
 
 
 def getapilevelbyid(discordid: int):
-    r = requests.post(url=f"{miniboincapi_host}/query/basic/bydiscordid", headers=header,
+    r = requests.post(url=f"{miniboincapi_host}/accounts/query/basic/bydiscordid", headers=header,
                       json={
                           "DiscordID": discordid
                       })
@@ -45,7 +45,7 @@ def isapilevelbyid(discordid: int, level: int):
 
 
 def deletebyid(discordid: int):
-    r = requests.post(url=f"{miniboincapi_host}/vaporise/user/bydiscordid", headers=header,
+    r = requests.post(url=f"{miniboincapi_host}/accounts/vaporise/user/bydiscordid", headers=header,
                       json={
                           "DiscordID": discordid
                       })
@@ -56,7 +56,7 @@ def deletebyid(discordid: int):
 
 
 def getresultsbyappid(appid: int):
-    r = requests.post(url=f"{miniboincapi_host}/stream/outputs/byappid", headers=header,
+    r = requests.post(url=f"{miniboincapi_host}/tasks/query/outputs/byappid", headers=header,
                       json={
                           "MetaID": appid
                       })
