@@ -1,3 +1,5 @@
+import json
+
 import requests
 import mysql.connector
 from config.config import mattapikey, miniboincapi_host, mysql_host, mysql_user, mysql_password
@@ -63,6 +65,18 @@ def getresultsbyappid(appid: int):
 
     if r.status_code == 200:
         return True, str(r.content)[2:-1].replace("\\n", "\n")
+    elif r.status_code == 404:
+        return False, "App not found!"
+    return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
+
+def getprogressbyappid(appid: int):
+    r = requests.post(url=f"{miniboincapi_host}/tasks/query/progress/bymetaid", headers=header,
+                      json={
+                          "ID": appid
+                      })
+
+    if r.status_code == 200:
+        return True, json.loads(str(r.content)[2:-1].replace("\\n", "\n"))
     elif r.status_code == 404:
         return False, "App not found!"
     return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)

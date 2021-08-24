@@ -133,6 +133,23 @@ class Microboinc(commands.Cog):
             chards.pie(fname, mattapi.getleaderdb(projectid))
         await ctx.send(content=f"The current Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
+    @cog_ext.cog_subcommand(base="microboinc", name="progress", options=[
+        create_option(
+            name="projectid",
+            description="The ID from the project you want the progress for!",
+            option_type=4,
+            required=True
+        )
+    ])
+    async def _microboinc_leaderboard(self, ctx: SlashContext, projectid: int):
+        success, res = mattapi.getprogressbyappid(projectid)
+
+        if not success:
+            await ctx.send("Something went wrong:\n" + res)
+            return
+        await ctx.send(content=f"The process of the Project: {res['Name']}\n"
+                               f"{res['TotalDone']} / {res['TotalGenerated']} ({res['TotalDone'] / res['TotalGenerated'] * 100}%)")
+
 
 def setup(bot):
     bot.add_cog(Microboinc(bot))
