@@ -141,7 +141,7 @@ class Microboinc(commands.Cog):
             required=True
         )
     ])
-    async def _microboinc_leaderboard(self, ctx: SlashContext, projectid: int):
+    async def _microboinc_progress(self, ctx: SlashContext, projectid: int):
         success, res = mattapi.getprogressbyappid(projectid)
 
         if not success:
