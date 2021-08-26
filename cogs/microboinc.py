@@ -89,6 +89,7 @@ class Microboinc(commands.Cog):
             await notauthorized(ctx)
             return
 
+        foname = f'{int(time())}_results{appid}.txt'
         fname = f'{rootdir}/results/{int(time())}_results{appid}.txt'
         suc, res = mattapi.getresultsbyappid(appid)
         if not suc:
@@ -99,7 +100,8 @@ class Microboinc(commands.Cog):
         f.write(res)
         f.close()
 
-        await ctx.send(f"Here are the results for app: {appid}", files=[discord.File(fname)])
+        await ctx.send(f"Here are the results for app: {appid}\nhttps://microboincresults.mcathome.dev/{foname}")
+        #, files=[discord.File(fname)])
 
     @cog_ext.cog_subcommand(base="microboinc", name="leaderboard", options=[
         create_option(
