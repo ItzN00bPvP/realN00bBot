@@ -55,6 +55,37 @@ class Microboinc(commands.Cog):
                                                 f"Nickname: {nickname}\n"
                                                 f"API-Key: {apikey}")
 
+    @cog_ext.cog_subcommand(base="microboinc", name="regenapikey", options=[
+        create_option(
+            name="user",
+            description="Only needed if you want to regen an API-Key for some one else!",
+            option_type=6,
+            required=False
+        )
+    ])
+    async def _microboinc_regenapikey(self, ctx: SlashContext, user: discord.Member = None):
+        apifor = ctx.author
+        if user is not None and user != ctx.author:
+            if not mattapi.isapilevelbyid(ctx.author_id, 4):
+                await notauthorized(ctx)
+                return
+            apifor = user
+
+        success, res = mattapi.regen(apifor.id)
+        if not success:
+            await ctx.send("Something went wrong:\n" + res)
+            return
+
+        apikey = res
+        try:
+            await apifor.send(content=f"Microboinc API-Key regened:\nAPI-Key: {apikey}")
+            await ctx.send(content=f"API-Key regened and send to their DMs.")
+        except discord.Forbidden:
+            await ctx.send(hidden=True, content=f"!Couldn't send API-Key to DMS!\n"
+                                                f"!THIS MESSAGE IS ONLY VISIBLE TO YOU!\n"
+                                                f"Microboinc account created for {apifor.mention}:\n"
+                                                f"API-Key: {apikey}")
+
     @cog_ext.cog_subcommand(base="microboinc", name="deletebyid", options=[
         create_option(
             name="user",

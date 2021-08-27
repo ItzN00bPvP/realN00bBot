@@ -25,6 +25,18 @@ def register(nickname: str, discordid: int):
         return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
 
 
+def regen(discordid: int):
+    r = requests.post(url=f"{miniboincapi_host}/accounts/regen/bydiscordid", headers=header,
+                      json={
+                          "DiscordID": discordid
+                      })
+
+    if r.status_code == 200:
+        return True, r.json()['APIKey']
+    else:
+        return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
+
+
 def getapilevelbyid(discordid: int):
     r = requests.post(url=f"{miniboincapi_host}/accounts/query/basic/bydiscordid", headers=header,
                       json={
@@ -68,6 +80,7 @@ def getresultsbyappid(appid: int):
     elif r.status_code == 404:
         return False, "App not found!"
     return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
+
 
 def getprogressbyappid(appid: int):
     r = requests.post(url=f"{miniboincapi_host}/tasks/query/progress/bymetaid", headers=header,
