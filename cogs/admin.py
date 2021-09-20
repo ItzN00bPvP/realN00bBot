@@ -18,7 +18,7 @@ class Slash(commands.Cog):
             required=True
         )
     ])
-    async def _microboinc_deletebyid(self, ctx: SlashContext, cog: str):
+    async def _admin_reloadcog(self, ctx: SlashContext, cog: str):
         if not ctx.author_id == 374245848659263488:
             await notauthorized(ctx)
             return
