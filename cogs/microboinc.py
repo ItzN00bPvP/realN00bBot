@@ -163,7 +163,7 @@ class Microboinc(commands.Cog):
         if type == "1":
             success, res = mattapi.getleaderboardbyid(projectid)
             if success:
-                leaderboard.graph(fname, res)
+                leaderboard.graph(fname, projectid, res)
             else:
                 await ctx.send("Something went wrong!")
                 return
