@@ -21,5 +21,6 @@ class i2s(commands.Cog):
         time.sleep(2)
         await ctx.send(content=f"The Seed of the ImageURL is: {hash(imageurl)}")
 
+
 def setup(bot):
     bot.add_cog(i2s(bot))
