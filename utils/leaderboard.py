@@ -14,37 +14,32 @@ testdata = [
 def graph(file, projectid, data: json):
     inputdata = []
     ano = []
-#        "showlegend": True,
-#        "barmode": "stack",
-#        "bargap": 0.618,
-#        "annotations": []
-
 
     for U in data['Leaderboard']:
-        pending = U['Points'] - U['ValidatedPoints'] - U['InvalidatedPoints']
+        username = U['User']['Username']
+        points_all = U['Points']
+        points_valid = U['ValidatedPoints']
+        points_invalid = U['InvalidatedPoints']
+        pending = points_all - points_valid - points_invalid
         ano.append({
-            "y": U['User']['Username'],
-            "x": U['Points'],
-            "text": U['Points'] - U['InvalidatedPoints'],
+            "y": username,
+            "x": points_all,
+            "text": str(points_valid) + " | " + str(pending) + " | " + str(points_invalid),
             "xanchor": "left",
             "yanchor": "middle",
             "showarrow": False
         })
 
-        inputdata.append([U['User']['Username'], U['ValidatedPoints'], pending, U['InvalidatedPoints']])
+        inputdata.append([username, points_valid, pending, points_invalid])
 
     df = pd.DataFrame(inputdata, columns=["User", "good", "pending", "bad"])
     fig = px.bar(df, title=f"Leaderboard for Project {projectid}", orientation='h', y='User',
-                 x=['good', 'pending', 'bad'], labels=dict(index="Users", value="Tasks"))  # , text="value")
+                 x=['good', 'pending', 'bad'], labels=dict(index="Users", value="Tasks", variable="Task stats"))
 
     fig._data[0]["marker"]['color'] = "rgba(43, 158, 0, 1)"
     fig._data[1]["marker"]['color'] = "rgba(0, 149, 166, 1)"
     fig._data[2]["marker"]['color'] = "rgba(126, 2, 184, 1)"
 
-    # fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
-    # fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
-    fig.update_layout(annotations=ano, barmode="stack")
-    fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
+    fig.update_layout(annotations=ano, plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
                       font_color='rgba(196, 222, 255, 1)')
-    fig.show()
     fig.write_image(file)
