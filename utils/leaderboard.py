@@ -27,7 +27,7 @@ def graph(file, data: json):
     fig._data[1]["marker"]['color'] = "rgba(0, 149, 166, 1)"
     fig._data[2]["marker"]['color'] = "rgba(126, 2, 184, 1)"
 
-    fig.update_layout(plot_bgcolor='rgba(0,0,0,0)')
+    fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)')
 
     fig.write_image(file)
 
