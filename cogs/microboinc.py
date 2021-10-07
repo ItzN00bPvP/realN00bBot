@@ -164,8 +164,9 @@ class Microboinc(commands.Cog):
             success, res = mattapi.getleaderboardbyid(projectid)
             if success:
                 leaderboard.graph(fname, res)
-            await ctx.send("Something went wrong!")
-            return
+            else:
+                await ctx.send("Something went wrong!")
+                return
         elif type == "2":
             await ctx.send("Not implemented yet!")
         await ctx.send(content=f"The current Leaderboard for Project: {projectid}", files=[discord.File(fname)])
