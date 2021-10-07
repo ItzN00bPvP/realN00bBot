@@ -26,7 +26,10 @@ def load_cogs(bot, cogs: list):
 
 load_cogs(bot,
           [
-              "cogs.ping",
-              "cogs.microboinc"
+              "cogs.admin",
+              "cogs.microboinc",
+              "cogs.i2s",
+              "cogs.fix",
+              "cogs.ping"
           ])
 bot.run(bottoken)

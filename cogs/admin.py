@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord_slash import cog_ext, SlashContext
 from discord_slash.utils.manage_commands import create_option
 
+from config import config
 from main import notauthorized
 
 
@@ -10,7 +11,7 @@ class Slash(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @cog_ext.cog_subcommand(base="admin", name="reloadcog", options=[
+    @cog_ext.cog_subcommand(guild_ids=config.slash_admin, base="admin", name="reloadcog", options=[
         create_option(
             name="cog",
             description="The cog you want to reload.",

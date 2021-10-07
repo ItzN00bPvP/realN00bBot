@@ -4,12 +4,14 @@ from discord.ext import commands
 from discord_slash import cog_ext, SlashContext
 from discord_slash.utils.manage_commands import create_option, create_choice
 
+from config import config
+
 
 class i2s(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @cog_ext.cog_slash(name="i2s", description="Gives you a seed to the ImageURL.", options=[
+    @cog_ext.cog_slash(guild_ids=config.slash_i2s, name="i2s", description="Gives you a seed to the ImageURL.", options=[
         create_option(
             name="imageurl",
             description="The URL to the Image",
