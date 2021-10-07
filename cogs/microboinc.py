@@ -161,11 +161,13 @@ class Microboinc(commands.Cog):
         fname = f'{rootdir}/leaderboards/{int(time())}_leaderboard{projectid}.png'
 
         if type == "1":
-            leaderboard.graph(fname, mattapi.getleaderboardbyid(projectid))
+            success, res = mattapi.getleaderboardbyid(projectid)
+            if success:
+                leaderboard.graph(fname, res)
+            await ctx.send("Something went wrong!")
+            return
         elif type == "2":
             await ctx.send("Not implemented yet!")
-            return
-            chards.pie(fname, mattapi.getleaderdb(projectid))
         await ctx.send(content=f"The current Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
     @cog_ext.cog_subcommand(base="microboinc", name="progress", options=[

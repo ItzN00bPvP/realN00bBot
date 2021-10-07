@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 import plotly.express as px
 
@@ -9,7 +11,7 @@ testdata = [
     ["User4", 2,2,3]
 ]
 
-def graph(file, data):
+def graph(file, data: json):
 
     inputdata =[]
 
@@ -29,4 +31,3 @@ def graph(file, data):
 
     fig.write_image(file)
 
-graph(file="fig.png", data=testdata)
