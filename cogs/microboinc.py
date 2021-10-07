@@ -5,7 +5,7 @@ from discord_slash import cog_ext, SlashContext
 from discord_slash.utils.manage_commands import create_option, create_choice
 
 from main import notauthorized
-from utils import mattapi, chards
+from utils import mattapi, chards, leaderboard
 from config.config import rootdir, apikeyselfcreationisallowed
 
 
@@ -161,8 +161,10 @@ class Microboinc(commands.Cog):
         fname = f'{rootdir}/leaderboards/{int(time())}_leaderboard{projectid}.png'
 
         if type == "1":
-            chards.graph(fname, mattapi.getleaderdb(projectid))
+            leaderboard.graph(fname, mattapi.getleaderboardbyid(projectid))
         elif type == "2":
+            await ctx.send("Not implemented yet!")
+            return
             chards.pie(fname, mattapi.getleaderdb(projectid))
         await ctx.send(content=f"The current Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 

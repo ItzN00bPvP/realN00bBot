@@ -94,8 +94,20 @@ def getprogressbyappid(appid: int):
         return False, "App not found!"
     return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
 
+def getleaderboardbyid(appid: int):
+    r = requests.post(url=f"{miniboincapi_host}/leaderboard/current", headers=header,
+                      json={
+                          "MetadataID": appid
+                      })
 
-def getleaderdb(pid: int):
+    if r.status_code == 200:
+        return True, json.loads(str(r.content)[2:-1].replace("\\n", "\n"))
+    elif r.status_code == 404:
+        return False, "App not found!"
+    return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
+
+
+def getleaderdb(pid: int, validated: bool = True):
     mydb = mysql.connector.connect(
         host=mysql_host,
         user=mysql_user,
@@ -104,7 +116,11 @@ def getleaderdb(pid: int):
 
     mycursor = mydb.cursor()
     mycursor.execute("USE pseudobanic;")
-    mycursor.execute(
-        f"SELECT COUNT(*) AS count, username FROM assignments JOIN tasks ON assignments.task_id = tasks.task_id JOIN users ON assignments.userid = users.userID WHERE task_metaid = {pid} and state = 1 GROUP BY users.userid ORDER BY count DESC;")
+    if validated:
+        mycursor.execute(
+            f"SELECT COUNT(*) AS count, username FROM assignments JOIN tasks ON assignments.task_id = tasks.task_id JOIN users ON assignments.userid = users.userID WHERE task_metaid = {pid} and state = 1 and task_status = 2 GROUP BY users.userid ORDER BY count DESC;")
+    else:
+        mycursor.execute(
+            f"SELECT COUNT(*) AS count, username FROM assignments JOIN tasks ON assignments.task_id = tasks.task_id JOIN users ON assignments.userid = users.userID WHERE task_metaid = {pid} and state = 1 and task_status = 1 GROUP BY users.userid ORDER BY count DESC;")
     myresult = mycursor.fetchall()
     return myresult

@@ -4,7 +4,7 @@ from discord_slash import SlashCommand
 from config.config import bottoken
 
 # command prefix isn't really needed because there a no normal commands
-bot = commands.Bot(command_prefix="mb!")
+bot = commands.Bot(command_prefix="!!")
 slash = SlashCommand(bot, sync_commands=True, sync_on_cog_reload=True)
 
 
@@ -26,7 +26,7 @@ def load_cogs(bot, cogs: list):
 
 load_cogs(bot,
           [
-              "cogs.admin",
+              "cogs.ping",
               "cogs.microboinc"
           ])
 bot.run(bottoken)
