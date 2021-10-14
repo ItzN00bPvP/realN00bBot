@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord_slash import cog_ext, SlashContext
 from discord_slash.utils.manage_commands import create_option, create_choice
 
+from config.config import roles
 from config import config
 from utils import mcpermsapi
 
@@ -51,7 +52,7 @@ class mcperms(commands.Cog):
             required=True
         )
     ])
-    @commands.has_any_role(config.roleslevel.ppa)
+    @commands.has_any_role(roles.admin, roles.servermod, roles.chatmod, roles.privateprojectaccess)
     async def _grant(self, ctx: SlashContext, server: str, permission: str, mcname: str, discorduser: discord.User):
         suc, res = mcpermsapi.grantperms(server, permission, mcname, discorduser.id)
         if suc:
