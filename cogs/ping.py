@@ -8,7 +8,7 @@ class ping(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(guild_ids=config.slash_ping, name="ping")
+    @commands.command(name="ping")
     async def _ping(self, ctx: commands.Context):
         await ctx.send("PONG!")
 
