@@ -34,6 +34,7 @@ class Microboinc(commands.Cog):
             if not mattapi.isapilevelbyid(ctx.author_id, 2):
                 await notauthorized(ctx)
                 return
+            print(str(user))
             apifor = user
         else:
             if not apikeyselfcreationisallowed:
