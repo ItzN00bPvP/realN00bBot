@@ -56,7 +56,7 @@ class mcperms(commands.Cog):
     async def _grant(self, ctx: SlashContext, server: str, permission: str, mcname: str, discorduser: discord.User):
         suc, res = mcpermsapi.grantperms(server, permission, mcname, discorduser.id)
         if suc:
-            await ctx.send(f"{res['permission']} granted to {discorduser.mention} for {res['mcname']} ({res['uuid']})")
+            await ctx.send(f"{res['permission']} granted to {discorduser.mention} for {res['mcname']} ({res['uuid']}) on {res['server']}")
             return
         await ctx.send(res)
 
