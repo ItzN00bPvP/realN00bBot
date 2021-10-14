@@ -37,7 +37,7 @@ class mcperms(commands.Cog):
                     value="private"
                 )
             ]
-        ),create_option(
+        ), create_option(
             name="mcname",
             description="The ign of the user e.g. N00bBot.",
             option_type=3,
@@ -51,6 +51,7 @@ class mcperms(commands.Cog):
             required=True
         )
     ])
+    @commands.has_any_role(config.roleslevel.ppa)
     async def _grant(self, ctx: SlashContext, server: str, permission: str, mcname: str, discorduser: discord.User):
         suc, res = mcpermsapi.grantperms(server, permission, mcname, discorduser.id)
         if suc:
