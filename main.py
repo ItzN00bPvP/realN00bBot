@@ -30,6 +30,7 @@ load_cogs(bot,
               "cogs.microboinc",
               "cogs.i2s",
               "cogs.fix",
-              "cogs.ping"
+              "cogs.ping",
+              "cogs.mcperms"
           ])
 bot.run(bottoken)
