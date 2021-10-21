@@ -1,9 +1,9 @@
 import pyourls3
 from discord.ext import commands
 from discord_slash import cog_ext, SlashContext
-from discord_slash.utils.manage_commands import create_option, create_choice
+from discord_slash.utils.manage_commands import create_option
 
-from config.config import roles, yourls_user, yourls_passwd
+from config.config import roleslevel, yourls_user, yourls_passwd
 from config import config
 
 
@@ -25,7 +25,7 @@ class shorturl(commands.Cog):
             required=True
         )
     ])
-    @commands.has_any_role(roles.admin, roles.servermod, roles.chatmod, roles.privateprojectaccess)
+    @commands.has_any_role(*roleslevel.ppa)
     async def _grant(self, ctx: SlashContext, url: str, tag: str):
         try:
             surl = self.yourls.shorten(url, keyword=tag)
