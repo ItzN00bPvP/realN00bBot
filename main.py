@@ -31,6 +31,7 @@ load_cogs(bot,
               "cogs.i2s",
               "cogs.fix",
               "cogs.ping",
-              "cogs.mcperms"
+              "cogs.mcperms",
+              "cogs.shorturl"
           ])
 bot.run(bottoken)
