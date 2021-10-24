@@ -31,8 +31,8 @@ class shorturl(commands.Cog):
             surl = self.yourls.shorten(url, keyword=tag)
             print(surl)
             await ctx.send(f"URL got shortened:\n"
-                           f"Long URL:```{surl['url']['url']}```"
-                           f"Short URL:```{surl['shorturl']}```")
+                           f"Long URL:```{surl['url']['url']} ```"
+                           f"Short URL:```{surl['shorturl']} ```")
         except pyourls3.exceptions.Pyourls3APIError as e:
             await ctx.send(str(e))
 
@@ -49,16 +49,15 @@ class shorturl(commands.Cog):
         if tag == "all":
             urls = self.yourls.stats()
             await ctx.send(f"General link statistics:\n"
-                           f"Total Links: ```{urls['total_links']}```"
-                           f"Total Clicks: ```{urls['total_clicks']}```")
-
+                           f"Total Links: ```{urls['total_links']} ```"
+                           f"Total Clicks: ```{urls['total_clicks']} ```")
             return
         try:
             urls = self.yourls.url_stats(tag)
-            await ctx.send(f"Stats for shortened URL: ```{urls['shorturl']}```"
-                           f"Long URL: ```{urls['url']}```"
-                           f"Clicks: ```{urls['clicks']}```"
-                           f"Created: ```{urls['timestamp']}```")
+            await ctx.send(f"Stats for shortened URL: ```{urls['shorturl']} ```"
+                           f"Long URL: ```{urls['url']} ```"
+                           f"Clicks: ```{urls['clicks']} ```"
+                           f"Created: ```{urls['timestamp']} ```")
         except:
             await ctx.send(f"The TAG probably doesn't exist! `{tag}`", delete_after=10)
 
