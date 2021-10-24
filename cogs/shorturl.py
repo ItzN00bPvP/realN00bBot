@@ -31,8 +31,8 @@ class shorturl(commands.Cog):
             surl = self.yourls.shorten(url, keyword=tag)
             print(surl)
             await ctx.send(f"URL got shortened:\n"
-                           f"Long URL:```{surl['url']['url']} ```"
-                           f"Short URL:```{surl['shorturl']} ```")
+                           f"Long URL: ```{surl['url']['url']} ```"
+                           f"Short URL: ```{surl['shorturl']} ```")
         except pyourls3.exceptions.Pyourls3APIError as e:
             await ctx.send(str(e))
 
