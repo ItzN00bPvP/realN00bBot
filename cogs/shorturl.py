@@ -1,3 +1,4 @@
+import discord
 import pyourls3
 from discord.ext import commands
 from discord_slash import cog_ext, SlashContext
@@ -20,7 +21,7 @@ class shorturl(commands.Cog):
             required=True
         ), create_option(
             name="tag",
-            description="The TAG you want mcahto.me/<TAG>.",
+            description="The TAG you want mcatho.me/<TAG>.",
             option_type=3,
             required=True
         )
@@ -29,17 +30,17 @@ class shorturl(commands.Cog):
     async def _create(self, ctx: SlashContext, url: str, tag: str):
         try:
             surl = self.yourls.shorten(url, keyword=tag)
-            print(surl)
-            await ctx.send(f"URL got shortened:\n"
-                           f"Long URL: ```{surl['url']['url']} ```"
-                           f"Short URL: ```{surl['shorturl']} ```")
+            embedvar = discord.Embed(title="URL got shortened", color=0x5500bd)
+            embedvar.add_field(name="long URL:", value=f"{surl['url']['url']}", inline=False)
+            embedvar.add_field(name="short URL:", value=f"{surl['shorturl']}", inline=False)
+            await ctx.send(embed=embedvar)
         except pyourls3.exceptions.Pyourls3APIError as e:
             await ctx.send(str(e))
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_shorturl_create, base="shorturl", name="stats", options=[
         create_option(
             name="tag",
-            description="The TAG you want to get the stats for mcahto.me/<TAG> or all.",
+            description="The TAG you want to get the stats for mcatho.me/<TAG> or all.",
             option_type=3,
             required=True
         )
@@ -48,16 +49,19 @@ class shorturl(commands.Cog):
     async def _stats(self, ctx: SlashContext, tag: str):
         if tag == "all":
             urls = self.yourls.stats()
-            await ctx.send(f"General link statistics:\n"
-                           f"Total Links: ```{urls['total_links']} ```"
-                           f"Total Clicks: ```{urls['total_clicks']} ```")
+            embedvar = discord.Embed(title="General link statistics", color=0x5500bd)
+            embedvar.add_field(name="Total Links:", value=f"{urls['total_links']}", inline=False)
+            embedvar.add_field(name="Total clicks:", value=f"{urls['total_clicks']}", inline=False)
+            await ctx.send(embed=embedvar)
             return
         try:
             urls = self.yourls.url_stats(tag)
-            await ctx.send(f"Stats for shortened URL: ```{urls['shorturl']} ```"
-                           f"Long URL: ```{urls['url']} ```"
-                           f"Clicks: ```{urls['clicks']} ```"
-                           f"Created: ```{urls['timestamp']} ```")
+            embedvar = discord.Embed(title="Statistics for the shortened URL", color=0x5500bd)
+            embedvar.add_field(name="short URL:", value=f"{urls['shorturl']}", inline=False)
+            embedvar.add_field(name="long URL:", value=f"{urls['url']}", inline=False)
+            embedvar.add_field(name="clicks:", value=f"{urls['clicks']}", inline=False)
+            embedvar.add_field(name="created:", value=f"{urls['timestamp']}", inline=False)
+            await ctx.send(embed=embedvar)
         except:
             await ctx.send(f"The TAG probably doesn't exist! `{tag}`", delete_after=10)
 
