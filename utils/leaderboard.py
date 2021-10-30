@@ -45,6 +45,7 @@ def graph(file, projectid, data: json):
                       font_color='rgba(196, 222, 255, 1)', font_size=24)
     fig.write_image(file, width=1920, height=1080)
 
+
 def multipower(file, projectid, data):
     inputdata = {}
     last = {}
@@ -61,8 +62,10 @@ def multipower(file, projectid, data):
 
     df = pd.DataFrame.from_dict(inputdata)
     df.sort_index(axis=0, inplace=True)
+    df.sort_index(axis=1, inplace=True)
 
-    fig = px.line(df, title=f'Valid points over time for project: {projectid}', labels={"index": "Time", "value": "Valid tasks", "variable": "Users"})
+    fig = px.line(df, title=f'Valid points over time for project: {projectid}',
+                  labels={"index": "Time", "value": "Valid tasks", "variable": "Users"})
     fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
                       font_color='rgba(196, 222, 255, 1)', legend_bgcolor='rgba(76, 91, 115, 1)', font_size=24)
     fig.update_traces(connectgaps=True)
