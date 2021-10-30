@@ -108,4 +108,45 @@ def singlepower(file, userid, username, data):
 
     fig.write_image(file, width=1920, height=1080)
 
+def totalpower(file, data):
+    last = {}
+    inputdata = {}
+    sps, svps, sivps = 0, 0, 0
 
+
+    for l in data.split("\n"):
+        uid, ps, vps, ivps, ts = l.split(" ")
+        ps = int(ps)
+        vps = int(vps)
+        ivps = int(ivps)
+        ts = int(ts)
+
+        if ps > last.setdefault(uid, {}).setdefault("ps", 0):
+            sps += 1
+        elif vps > last.setdefault(uid, {}).setdefault("vps", 0):
+            svps += 1
+        elif ivps > last.setdefault(uid, {}).setdefault("ivps", 0):
+            sivps += 1
+
+        iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()
+
+        inputdata.setdefault("points", {})[iso] = sps
+        inputdata.setdefault("validpoints", {})[iso] = svps
+        inputdata.setdefault("invalidpoints", {})[iso] = sivps
+
+        last[uid]["ps"] = ps
+        last[uid]["vps"] = vps
+        last[uid]["ivps"] = ivps
+
+    df = pd.DataFrame.from_dict(inputdata)
+    df.sort_index(axis=0, inplace=True)
+
+    fig = px.line(df, title='Total power over time ', labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
+    fig._data[0]["line"]['color'] = "rgba(0, 149, 166, 1)"
+    fig._data[1]["line"]['color'] = "rgba(43, 158, 0, 1)"
+    fig._data[2]["line"]['color'] = "rgba(126, 2, 184, 1)"
+    fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
+                      font_color='rgba(196, 222, 255, 1)', legend_bgcolor='rgba(76, 91, 115, 1)', font_size=24)
+    fig.update_traces(connectgaps=True)
+    fig.update_xaxes(type='date')
+    fig.write_image(file, width=1920, height=1080)

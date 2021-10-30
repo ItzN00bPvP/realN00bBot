@@ -34,7 +34,6 @@ class Microboinc(commands.Cog):
             if not mattapi.isapilevelbyid(ctx.author_id, 2):
                 await notauthorized(ctx)
                 return
-            print(str(user))
             apifor = user
         else:
             if not apikeyselfcreationisallowed:
@@ -255,6 +254,27 @@ class Microboinc(commands.Cog):
 
         await m.edit(content=f"The singlepower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_histleaderboard_totalpower, base="microboinc",
+                            name="histleaderboard-totalpower",
+                            options=[
+                                create_option(
+                                    name="projectid",
+                                    description="The ID from the project you want the leaderboard from.",
+                                    option_type=4,
+                                    required=True
+                                )
+                            ])
+    async def _microboinc_histleaderboard_multipower(self, ctx: SlashContext, projectid: int):
+        fname = f'{rootdir}/leaderboards/{int(time())}_histleaderboard-totalpower-{projectid}.png'
+        m = await ctx.send("please wait a moment")
+        success, res = mattapi.gethistleaderboardbyid(projectid)
+        if success:
+            leaderboard.totalpower(fname, res)
+        else:
+            await m.edit(content="Something went wrong!")
+            return
+
+        await m.edit(content=f"The totalpower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
 def setup(bot):
     bot.add_cog(Microboinc(bot))
