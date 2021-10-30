@@ -94,6 +94,7 @@ def getprogressbyappid(appid: int):
         return False, "App not found!"
     return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
 
+
 def getleaderboardbyid(appid: int):
     r = requests.post(url=f"{miniboincapi_host}/leaderboard/current", headers=header,
                       json={
@@ -102,6 +103,19 @@ def getleaderboardbyid(appid: int):
 
     if r.status_code == 200:
         return True, json.loads(str(r.content)[2:-1].replace("\\n", "\n"))
+    elif r.status_code == 404:
+        return False, "App not found!"
+    return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
+
+
+def gethistleaderboardbyid(appid: int):
+    r = requests.post(url=f"{miniboincapi_host}/leaderboard/historical/byprojectid", headers=header,
+                      json={
+                          "MetadataID": appid
+                      })
+
+    if r.status_code == 200:
+        return True, str(r.content)[2:-1].replace("\\n", "\n")
     elif r.status_code == 404:
         return False, "App not found!"
     return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
