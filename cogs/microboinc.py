@@ -134,7 +134,7 @@ class Microboinc(commands.Cog):
         f.close()
 
         await ctx.send(f"Here are the results for app: {appid}\nhttps://microboincresults.mcathome.dev/{foname}")
-        #, files=[discord.File(fname)])
+        # , files=[discord.File(fname)])
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_leaderboard, base="microboinc", name="leaderboard", options=[
         create_option(
@@ -160,7 +160,7 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_leaderboard(self, ctx: SlashContext, projectid: int, type: str = "1"):
-        fname = f'{rootdir}/leaderboards/{int(time())}_leaderboard{projectid}.png'
+        fname = f'{rootdir}/leaderboards/{int(time())}_leaderboard-{projectid}.png'
 
         if type == "1":
             success, res = mattapi.getleaderboardbyid(projectid)
@@ -189,6 +189,28 @@ class Microboinc(commands.Cog):
             return
         await ctx.send(content=f"The process of the Project: {res['Name']}\n"
                                f"{res['TotalDone']} / {res['TotalGenerated']} ({res['TotalDone'] / res['TotalGenerated'] * 100}%)")
+
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_histleaderboard_multipower, base="microboinc", name="histleaderboard-multipower",
+                            options=[
+                                create_option(
+                                    name="projectid",
+                                    description="The ID from the project you want the leaderboard from!",
+                                    option_type=4,
+                                    required=True
+                                )
+                            ])
+    async def _microboinc_histleaderboard_multipower(self, ctx: SlashContext, projectid: int):
+        fname = f'{rootdir}/leaderboards/{int(time())}_histleaderboard-multipower-{projectid}.png'
+        m = await ctx.send("please wait a moment")
+        success, res = mattapi.gethistleaderboardbyid(projectid)
+        if success:
+            leaderboard.multipower(fname, projectid, res)
+        else:
+            await m.edit(content="Something went wrong!")
+            return
+
+        lm = await m.edit(content=f"The multipower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
+        await m.edit(content=f"done: https://discord.com/channels/{ctx.guild_id}/{ctx.channel_id}/{lm.id}")
 
 
 def setup(bot):
