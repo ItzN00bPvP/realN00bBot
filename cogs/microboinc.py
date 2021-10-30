@@ -209,8 +209,7 @@ class Microboinc(commands.Cog):
             await m.edit(content="Something went wrong!")
             return
 
-        lm = await m.edit(content=f"The multipower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
-        await m.edit(content=f"done: https://discord.com/channels/{ctx.guild_id}/{ctx.channel_id}/{lm.id}")
+        await m.edit(content=f"The multipower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
 
 def setup(bot):
