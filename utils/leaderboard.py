@@ -106,7 +106,6 @@ def singlepower(file, userid, username, data):
     fig.update_traces(connectgaps=True)
     fig.update_xaxes(type='date')
 
-    fig.show()
     fig.write_image(file, width=1920, height=1080)
 
 
