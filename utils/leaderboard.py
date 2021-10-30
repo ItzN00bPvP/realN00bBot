@@ -72,3 +72,41 @@ def multipower(file, projectid, data):
     fig.update_xaxes(type='date')
 
     fig.write_image(file, width=1920, height=1080)
+
+def singlepower(file, userid, username, data):
+    l1, l2, l3 = 0, 0, 0
+    inputdata = {}
+    for l in data.split("\n"):
+        uid, ps, vps, ivps, ts = l.split(" ")
+        ps = int(ps)
+        vps = int(vps)
+        ivps = int(ivps)
+
+        if int(uid) == int(userid):
+            if ps >= l1 and vps >= l2 and ivps >= l3:
+                l1, l2, l3 = ps, vps, ivps
+                iso = datetime.fromtimestamp(int(ts)).replace(microsecond=0, second=0).isoformat()
+                inputdata.setdefault("points", {})[iso] = ps
+                inputdata.setdefault("validpoints", {})[iso] = vps
+                inputdata.setdefault("invalidpoints", {})[iso] = ivps
+
+    df = pd.DataFrame.from_dict(inputdata)
+    df.sort_index(axis=0, inplace=True)
+
+    fig = px.line(df, title=f"Power over time from: {username}",
+                  labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
+    try:
+        fig._data[0]["line"]['color'] = "rgba(0, 149, 166, 1)"
+        fig._data[1]["line"]['color'] = "rgba(43, 158, 0, 1)"
+        fig._data[2]["line"]['color'] = "rgba(126, 2, 184, 1)"
+    except:
+        pass
+    fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
+                      font_color='rgba(196, 222, 255, 1)', legend_bgcolor='rgba(76, 91, 115, 1)', font_size=24)
+    fig.update_traces(connectgaps=True)
+    fig.update_xaxes(type='date')
+
+    fig.show()
+    fig.write_image(file, width=1920, height=1080)
+
+

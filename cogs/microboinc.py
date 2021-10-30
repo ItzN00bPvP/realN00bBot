@@ -176,7 +176,7 @@ class Microboinc(commands.Cog):
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_progress, base="microboinc", name="progress", options=[
         create_option(
             name="projectid",
-            description="The ID from the project you want the progress for!",
+            description="The ID from the project you want the progress for.",
             option_type=4,
             required=True
         )
@@ -190,11 +190,12 @@ class Microboinc(commands.Cog):
         await ctx.send(content=f"The process of the Project: {res['Name']}\n"
                                f"{res['TotalDone']} / {res['TotalGenerated']} ({res['TotalDone'] / res['TotalGenerated'] * 100}%)")
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_histleaderboard_multipower, base="microboinc", name="histleaderboard-multipower",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_histleaderboard_multipower, base="microboinc",
+                            name="histleaderboard-multipower",
                             options=[
                                 create_option(
                                     name="projectid",
-                                    description="The ID from the project you want the leaderboard from!",
+                                    description="The ID from the project you want the leaderboard from.",
                                     option_type=4,
                                     required=True
                                 )
@@ -210,6 +211,49 @@ class Microboinc(commands.Cog):
             return
 
         await m.edit(content=f"The multipower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
+
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_histleaderboard_singlepower, base="microboinc",
+                            name="histleaderboard-singlepower",
+                            options=[
+                                create_option(
+                                    name="projectid",
+                                    description="The ID from the project you want the leaderboard from.",
+                                    option_type=4,
+                                    required=True
+                                ), create_option(
+                                    name="user",
+                                    description="The User you want the leaderboard from.",
+                                    option_type=6,
+                                    required=True
+                                ),create_option(
+                                    name="internaluseridoverride",
+                                    description="The internal ID from the user(overrides the discord user)",
+                                    option_type=4,
+                                    required=False
+                                )
+                            ])
+    async def _microboinc_histleaderboard_singlepower(self, ctx: SlashContext, projectid: int, user: discord.User, internaluseridoverride: int=None):
+        fname = f'{rootdir}/leaderboards/{int(time())}_histleaderboard-singlepower-{projectid}-{user.id}.png'
+        m = await ctx.send("please wait a moment")
+
+        userid = internaluseridoverride
+        username = f"OVERRIDE-{userid}"
+        if internaluseridoverride is None:
+            uisuc, uires = mattapi.getuserinfobyid(user.id)
+            if not uisuc:
+                await m.edit(content=f"User not found: {user.name}({user.id})")
+                return
+            userid = uires["User"]["ID"]
+            username = uires["User"]["Username"]
+
+        success, res = mattapi.gethistleaderboardbyid(projectid)
+        if success:
+            leaderboard.singlepower(fname, userid, username, res)
+        else:
+            await m.edit(content="Something went wrong!")
+            return
+
+        await m.edit(content=f"The singlepower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
 
 def setup(bot):

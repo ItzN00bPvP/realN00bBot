@@ -36,6 +36,17 @@ def regen(discordid: int):
     else:
         return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
 
+def getuserinfobyid(discordid: int):
+    r = requests.post(url=f"{miniboincapi_host}/accounts/query/basic/bydiscordid", headers=header,
+                      json={
+                          "DiscordID": discordid
+                      })
+
+    if r.status_code == 200:
+        return True, r.json()
+    elif r.status_code == 400:
+        return False, "You don't have a API-Key yet."
+    return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
 
 def getapilevelbyid(discordid: int):
     r = requests.post(url=f"{miniboincapi_host}/accounts/query/basic/bydiscordid", headers=header,
