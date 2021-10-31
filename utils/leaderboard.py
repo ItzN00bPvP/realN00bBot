@@ -95,12 +95,9 @@ def singlepower(file, userid, username, data):
 
     fig = px.line(df, title=f"Power over time from: {username}",
                   labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
-    try:
-        fig._data[0]["line"]['color'] = "rgba(0, 149, 166, 1)"
-        fig._data[1]["line"]['color'] = "rgba(43, 158, 0, 1)"
-        fig._data[2]["line"]['color'] = "rgba(126, 2, 184, 1)"
-    except:
-        pass
+    if 0 < len(fig._data): fig._data[0]["line"]['color'] = "rgba(0, 149, 166, 1)"
+    if 1 < len(fig._data): fig._data[1]["line"]['color'] = "rgba(43, 158, 0, 1)"
+    if 2 < len(fig._data): fig._data[2]["line"]['color'] = "rgba(126, 2, 184, 1)"
     fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
                       font_color='rgba(196, 222, 255, 1)', legend_bgcolor='rgba(76, 91, 115, 1)', font_size=24)
     fig.update_traces(connectgaps=True)
@@ -151,6 +148,8 @@ def totalpower(file, data):
     fig.update_xaxes(type='date')
     fig.write_image(file, width=1920, height=1080)
 
+
+
 def totalhourlypower(file, data):
     last = {}
     inputdata = {}
@@ -165,9 +164,9 @@ def totalhourlypower(file, data):
         iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
         if ps > last.setdefault(uid, {}).setdefault("ps", 0):
             inputdata.setdefault("points", {}).setdefault(iso, []).append("1")
-        if vps > last.setdefault(uid, {}).setdefault("vps", 0):
+        elif vps > last.setdefault(uid, {}).setdefault("vps", 0):
             inputdata.setdefault("validpoints", {}).setdefault(iso, []).append("1")
-        if ivps > last.setdefault(uid, {}).setdefault("ivps", 0):
+        elif ivps > last.setdefault(uid, {}).setdefault("ivps", 0):
             inputdata.setdefault("invalidpoints", {}).setdefault(iso, []).append("1")
 
         last[uid]["ps"] = ps
@@ -185,6 +184,50 @@ def totalhourlypower(file, data):
     fig._data[0]["line"]['color'] = "rgba(0, 149, 166, 1)"
     fig._data[1]["line"]['color'] = "rgba(43, 158, 0, 1)"
     fig._data[2]["line"]['color'] = "rgba(126, 2, 184, 1)"
+    fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
+                      font_color='rgba(196, 222, 255, 1)', legend_bgcolor='rgba(76, 91, 115, 1)', font_size=24)
+    fig.update_traces(connectgaps=True)
+    fig.update_xaxes(type='date')
+
+    fig.write_image(file, width=1920, height=1080)
+
+def singlehourlypower(file, userid, username, data):
+    last = {}
+    inputdata = {}
+
+    for l in data.split("\n"):
+        uid, ps, vps, ivps, ts = l.split(" ")
+        ps = int(ps)
+        vps = int(vps)
+        ivps = int(ivps)
+        ts = int(ts)
+
+        if int(uid) == int(userid):
+            if ps > last.setdefault("ps", 0):
+                iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
+                inputdata.setdefault("ps", {}).setdefault(iso, []).append("1")
+            if vps > last.setdefault("vps", 0):
+                iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
+                inputdata.setdefault("vps", {}).setdefault(iso, []).append("1")
+            if ivps > last.setdefault("ivps", 0):
+                iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
+                inputdata.setdefault("ivps", {}).setdefault(iso, []).append("1")
+
+            last["ps"] = ps
+            last["vps"] = vps
+            last["ivps"] = ivps
+
+    nl = {}
+    for pt in inputdata.keys():
+        for ht in inputdata[pt].keys():
+            nl.setdefault(pt, {})[ht] = len(inputdata[pt][ht])
+
+    df = pd.DataFrame.from_dict(nl)
+
+    fig = px.line(df, title=f"Hourly stats over time for: {username}", labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
+    if 0 < len(fig._data): fig._data[0]["line"]['color'] = "rgba(0, 149, 166, 1)"
+    if 1 < len(fig._data): fig._data[1]["line"]['color'] = "rgba(43, 158, 0, 1)"
+    if 2 < len(fig._data): fig._data[2]["line"]['color'] = "rgba(126, 2, 184, 1)"
     fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
                       font_color='rgba(196, 222, 255, 1)', legend_bgcolor='rgba(76, 91, 115, 1)', font_size=24)
     fig.update_traces(connectgaps=True)

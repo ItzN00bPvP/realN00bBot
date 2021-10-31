@@ -233,7 +233,6 @@ class Microboinc(commands.Cog):
                             ])
     async def _microboinc_histleaderboard_singlepower(self, ctx: SlashContext, projectid: int, user: discord.User,
                                                       internaluseridoverride: int = None):
-        fname = f'{rootdir}/leaderboards/{int(time())}_histleaderboard-singlepower-{projectid}-{user.id}.png'
         m = await ctx.send("please wait a moment")
 
         userid = internaluseridoverride
@@ -245,6 +244,7 @@ class Microboinc(commands.Cog):
                 return
             userid = uires["User"]["ID"]
             username = uires["User"]["Username"]
+        fname = f'{rootdir}/leaderboards/{int(time())}_histleaderboard-singlepower-{projectid}-{userid}.png'
 
         success, res = mattapi.gethistleaderboardbyid(projectid)
         if success:
@@ -298,6 +298,51 @@ class Microboinc(commands.Cog):
             return
 
         await m.edit(content=f"The totalhourlypower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
+
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_histleaderboard_singlehourlypower, base="microboinc",
+                            name="histleaderboard-singlehourlypower",
+                            options=[
+                                create_option(
+                                    name="projectid",
+                                    description="The ID from the project you want the leaderboard from.",
+                                    option_type=4,
+                                    required=True
+                                ), create_option(
+                                    name="user",
+                                    description="The User you want the leaderboard from.",
+                                    option_type=6,
+                                    required=True
+                                ), create_option(
+                                    name="internaluseridoverride",
+                                    description="The internal ID from the user(overrides the discord user)",
+                                    option_type=4,
+                                    required=False
+                                )
+                            ])
+    async def _microboinc_histleaderboard_singlehourlypower(self, ctx: SlashContext, projectid: int, user: discord.User,
+                                                            internaluseridoverride: int = None):
+        m = await ctx.send("please wait a moment")
+
+        userid = internaluseridoverride
+        username = f"OVERRIDE-{userid}"
+        if internaluseridoverride is None:
+            uisuc, uires = mattapi.getuserinfobyid(user.id)
+            if not uisuc:
+                await m.edit(content=f"User not found: {user.name}({user.id})")
+                return
+            userid = uires["User"]["ID"]
+            username = uires["User"]["Username"]
+
+        fname = f'{rootdir}/leaderboards/{int(time())}_histleaderboard-singlehourlypower-{projectid}-{userid}.png'
+
+        success, res = mattapi.gethistleaderboardbyid(projectid)
+        if success:
+            leaderboard.singlehourlypower(fname, userid, username, res)
+        else:
+            await m.edit(content="Something went wrong!")
+            return
+
+        await m.edit(content=f"The singlehourlypower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
 
 def setup(bot):
