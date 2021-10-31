@@ -147,7 +147,7 @@ def totalhourlypower(file, projectid, data):
 
     fig.write_image(file, width=1920, height=1080)
 
-def singlehourlypower(file, userid, username, data):
+def singlehourlypower(file, projectid, userid, username, data):
     last = {}
     inputdata = {}
 
@@ -180,7 +180,7 @@ def singlehourlypower(file, userid, username, data):
 
     df = pd.DataFrame.from_dict(nl)
 
-    fig = px.line(df, title=f"Hourly stats over time for: {username}",
+    fig = px.line(df, title=f"Hourly stats over time from: {username} Project: {projectid}",
                   labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
     if 0 < len(fig._data): fig._data[0]["line"]['color'] = "rgba(0, 149, 166, 1)"
     if 1 < len(fig._data): fig._data[1]["line"]['color'] = "rgba(43, 158, 0, 1)"
