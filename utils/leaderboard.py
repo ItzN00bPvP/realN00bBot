@@ -164,11 +164,11 @@ def totalhourlypower(file, data):
 
         iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
         if ps > last.setdefault(uid, {}).setdefault("ps", 0):
-            inputdata.setdefault("ps", {}).setdefault(iso, []).append("1")
+            inputdata.setdefault("points", {}).setdefault(iso, []).append("1")
         if vps > last.setdefault(uid, {}).setdefault("vps", 0):
-            inputdata.setdefault("vps", {}).setdefault(iso, []).append("1")
+            inputdata.setdefault("validpoints", {}).setdefault(iso, []).append("1")
         if ivps > last.setdefault(uid, {}).setdefault("ivps", 0):
-            inputdata.setdefault("ivps", {}).setdefault(iso, []).append("1")
+            inputdata.setdefault("invalidpoints", {}).setdefault(iso, []).append("1")
 
         last[uid]["ps"] = ps
         last[uid]["vps"] = vps
