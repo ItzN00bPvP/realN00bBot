@@ -159,15 +159,13 @@ def singlehourlypower(file, projectid, userid, username, data):
         ts = int(ts)
 
         if int(uid) == int(userid):
+            iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
             if ps > last.setdefault("ps", 0):
-                iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
-                inputdata.setdefault("ps", {}).setdefault(iso, []).append("1")
+                inputdata.setdefault("points", {}).setdefault(iso, []).append("1")
             if vps > last.setdefault("vps", 0):
-                iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
-                inputdata.setdefault("vps", {}).setdefault(iso, []).append("1")
+                inputdata.setdefault("validpoints", {}).setdefault(iso, []).append("1")
             if ivps > last.setdefault("ivps", 0):
-                iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
-                inputdata.setdefault("ivps", {}).setdefault(iso, []).append("1")
+                inputdata.setdefault("invalidpoints", {}).setdefault(iso, []).append("1")
 
             last["ps"] = ps
             last["vps"] = vps
