@@ -57,7 +57,7 @@ def multipower(file, projectid, data):
 
         if vps > last.setdefault(uid, 0):
             inputdata.setdefault(int(uid), {})[
-                datetime.fromtimestamp(int(ts)).replace(microsecond=0, second=0).isoformat()] = vps  # ,minute=0
+                datetime.fromtimestamp(int(ts)).replace(microsecond=0, second=0).isoformat()] = vps
             last[uid] = vps
 
     df = pd.DataFrame.from_dict(inputdata)
@@ -141,7 +141,7 @@ def totalpower(file, data):
     df = pd.DataFrame.from_dict(inputdata)
     df.sort_index(axis=0, inplace=True)
 
-    fig = px.line(df, title='Total power over time ', labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
+    fig = px.line(df, title='Total power over time', labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
     fig._data[0]["line"]['color'] = "rgba(0, 149, 166, 1)"
     fig._data[1]["line"]['color'] = "rgba(43, 158, 0, 1)"
     fig._data[2]["line"]['color'] = "rgba(126, 2, 184, 1)"
@@ -149,4 +149,45 @@ def totalpower(file, data):
                       font_color='rgba(196, 222, 255, 1)', legend_bgcolor='rgba(76, 91, 115, 1)', font_size=24)
     fig.update_traces(connectgaps=True)
     fig.update_xaxes(type='date')
+    fig.write_image(file, width=1920, height=1080)
+
+def totalhourlypower(file, data):
+    last = {}
+    inputdata = {}
+
+    for l in data.split("\n"):
+        uid, ps, vps, ivps, ts = l.split(" ")
+        ps = int(ps)
+        vps = int(vps)
+        ivps = int(ivps)
+        ts = int(ts)
+
+        iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
+        if ps > last.setdefault(uid, {}).setdefault("ps", 0):
+            inputdata.setdefault("ps", {}).setdefault(iso, []).append("1")
+        if vps > last.setdefault(uid, {}).setdefault("vps", 0):
+            inputdata.setdefault("vps", {}).setdefault(iso, []).append("1")
+        if ivps > last.setdefault(uid, {}).setdefault("ivps", 0):
+            inputdata.setdefault("ivps", {}).setdefault(iso, []).append("1")
+
+        last[uid]["ps"] = ps
+        last[uid]["vps"] = vps
+        last[uid]["ivps"] = ivps
+
+    nl = {}
+    for pt in inputdata.keys():
+        for ht in inputdata[pt].keys():
+            nl.setdefault(pt, {})[ht] = len(inputdata[pt][ht])
+
+    df = pd.DataFrame.from_dict(nl)
+
+    fig = px.line(df, title="Hourly stats over time", labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
+    fig._data[0]["line"]['color'] = "rgba(0, 149, 166, 1)"
+    fig._data[1]["line"]['color'] = "rgba(43, 158, 0, 1)"
+    fig._data[2]["line"]['color'] = "rgba(126, 2, 184, 1)"
+    fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
+                      font_color='rgba(196, 222, 255, 1)', legend_bgcolor='rgba(76, 91, 115, 1)', font_size=24)
+    fig.update_traces(connectgaps=True)
+    fig.update_xaxes(type='date')
+
     fig.write_image(file, width=1920, height=1080)
