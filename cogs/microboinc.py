@@ -6,7 +6,7 @@ from discord_slash.utils.manage_commands import create_option, create_choice
 
 from config import config
 from main import notauthorized
-from utils import mattapi, chards, leaderboard
+from utils import mattapi, chards, leaderboard, stats
 from config.config import rootdir, apikeyselfcreationisallowed
 
 
@@ -189,39 +189,39 @@ class Microboinc(commands.Cog):
         await ctx.send(content=f"The process of the Project: {res['Name']}\n"
                                f"{res['TotalDone']} / {res['TotalGenerated']} ({res['TotalDone'] / res['TotalGenerated'] * 100}%)")
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_histleaderboard_multipower, base="microboinc",
-                            name="histleaderboard-multipower",
+#
+
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_multipower, base="microboinc", name="stats-multipower",
                             options=[
                                 create_option(
                                     name="projectid",
-                                    description="The ID from the project you want the leaderboard from.",
+                                    description="The ID of the project you want the stats for.",
                                     option_type=4,
                                     required=True
                                 )
                             ])
-    async def _microboinc_histleaderboard_multipower(self, ctx: SlashContext, projectid: int):
-        fname = f'{rootdir}/leaderboards/{int(time())}_histleaderboard-multipower-{projectid}.png'
-        m = await ctx.send("please wait a moment")
+    async def _microboinc_stats_multipower(self, ctx: SlashContext, projectid: int):
+        fname = f'{rootdir}/stats/{int(time())}_stats-multipower-{projectid}.png'
+        m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = mattapi.gethistleaderboardbyid(projectid)
         if success:
-            leaderboard.multipower(fname, projectid, res)
+            stats.multipower(fname, projectid, res)
         else:
             await m.edit(content="Something went wrong!")
             return
 
-        await m.edit(content=f"The multipower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
+        await m.edit(content=f"Multipower stats for Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_histleaderboard_singlepower, base="microboinc",
-                            name="histleaderboard-singlepower",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlepower, base="microboinc", name="stats-singlepower",
                             options=[
                                 create_option(
                                     name="projectid",
-                                    description="The ID from the project you want the leaderboard from.",
+                                    description="The ID of the project you want the stats for.",
                                     option_type=4,
                                     required=True
                                 ), create_option(
                                     name="user",
-                                    description="The User you want the leaderboard from.",
+                                    description="The User you want the stats for.",
                                     option_type=6,
                                     required=True
                                 ), create_option(
@@ -231,9 +231,9 @@ class Microboinc(commands.Cog):
                                     required=False
                                 )
                             ])
-    async def _microboinc_histleaderboard_singlepower(self, ctx: SlashContext, projectid: int, user: discord.User,
-                                                      internaluseridoverride: int = None):
-        m = await ctx.send("please wait a moment")
+    async def _microboinc_stats_singlepower(self, ctx: SlashContext, projectid: int, user: discord.User,
+                                            internaluseridoverride: int = None):
+        m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
 
         userid = internaluseridoverride
         username = f"OVERRIDE-{userid}"
@@ -244,84 +244,81 @@ class Microboinc(commands.Cog):
                 return
             userid = uires["User"]["ID"]
             username = uires["User"]["Username"]
-        fname = f'{rootdir}/leaderboards/{int(time())}_histleaderboard-singlepower-{projectid}-{userid}.png'
+        fname = f'{rootdir}/stats/{int(time())}_stats-singlepower-{projectid}-{userid}.png'
 
         success, res = mattapi.gethistleaderboardbyid(projectid)
         if success:
-            leaderboard.singlepower(fname, userid, username, res)
+            stats.singlepower(fname, userid, username, res)
         else:
             await m.edit(content="Something went wrong!")
             return
 
-        await m.edit(content=f"The singlepower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
+        await m.edit(content=f"Singlepower stats from: {username} Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_histleaderboard_totalpower, base="microboinc",
-                            name="histleaderboard-totalpower",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalpower, base="microboinc", name="stats-totalpower",
                             options=[
                                 create_option(
                                     name="projectid",
-                                    description="The ID from the project you want the leaderboard from.",
+                                    description="The ID of the project you want the stats for.",
                                     option_type=4,
                                     required=True
                                 )
                             ])
-    async def _microboinc_histleaderboard_totalpower(self, ctx: SlashContext, projectid: int):
-        fname = f'{rootdir}/leaderboards/{int(time())}_histleaderboard-totalpower-{projectid}.png'
-        m = await ctx.send("please wait a moment")
+    async def _microboinc_stats_totalpower(self, ctx: SlashContext, projectid: int):
+        fname = f'{rootdir}/stats/{int(time())}_stats-totalpower-{projectid}.png'
+        m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = mattapi.gethistleaderboardbyid(projectid)
         if success:
-            leaderboard.totalpower(fname, res)
+            stats.totalpower(fname, res)
         else:
             await m.edit(content="Something went wrong!")
             return
 
-        await m.edit(content=f"The totalpower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
+        await m.edit(content=f"Totalpower stats from Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_histleaderboard_totalhourlypower, base="microboinc",
-                            name="histleaderboard-totalhourlypower",
-                            options=[
-                                create_option(
-                                    name="projectid",
-                                    description="The ID from the project you want the leaderboard from.",
-                                    option_type=4,
-                                    required=True
-                                )
-                            ])
-    async def _microboinc_histleaderboard_totalhourlypower(self, ctx: SlashContext, projectid: int):
-        fname = f'{rootdir}/leaderboards/{int(time())}_histleaderboard-totalhourlypower-{projectid}.png'
-        m = await ctx.send("please wait a moment")
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalhourlypower, base="microboinc",
+                            name="stats-totalhourlypower", options=[
+            create_option(
+                name="projectid",
+                description="The ID of the project you want the stats for.",
+                option_type=4,
+                required=True
+            )
+        ])
+    async def _microboinc_stats_totalhourlypower(self, ctx: SlashContext, projectid: int):
+        fname = f'{rootdir}/stats/{int(time())}_stats-totalhourlypower-{projectid}.png'
+        m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = mattapi.gethistleaderboardbyid(projectid)
         if success:
-            leaderboard.totalhourlypower(fname, res)
+            stats.totalhourlypower(fname, res)
         else:
             await m.edit(content="Something went wrong!")
             return
 
-        await m.edit(content=f"The totalhourlypower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
+        await m.edit(content=f"Totalhourlypower stats from Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_histleaderboard_singlehourlypower, base="microboinc",
-                            name="histleaderboard-singlehourlypower",
-                            options=[
-                                create_option(
-                                    name="projectid",
-                                    description="The ID from the project you want the leaderboard from.",
-                                    option_type=4,
-                                    required=True
-                                ), create_option(
-                                    name="user",
-                                    description="The User you want the leaderboard from.",
-                                    option_type=6,
-                                    required=True
-                                ), create_option(
-                                    name="internaluseridoverride",
-                                    description="The internal ID from the user(overrides the discord user)",
-                                    option_type=4,
-                                    required=False
-                                )
-                            ])
-    async def _microboinc_histleaderboard_singlehourlypower(self, ctx: SlashContext, projectid: int, user: discord.User,
-                                                            internaluseridoverride: int = None):
-        m = await ctx.send("please wait a moment")
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlehourlypower, base="microboinc",
+                            name="stats-singlehourlypower", options=[
+            create_option(
+                name="projectid",
+                description="The ID of the project you want the stats for.",
+                option_type=4,
+                required=True
+            ), create_option(
+                name="user",
+                description="The User you want the stats for.",
+                option_type=6,
+                required=True
+            ), create_option(
+                name="internaluseridoverride",
+                description="The internal ID from the user(overrides the discord user)",
+                option_type=4,
+                required=False
+            )
+        ])
+    async def _microboinc_stats_singlehourlypower(self, ctx: SlashContext, projectid: int, user: discord.User,
+                                                  internaluseridoverride: int = None):
+        m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
 
         userid = internaluseridoverride
         username = f"OVERRIDE-{userid}"
@@ -333,16 +330,16 @@ class Microboinc(commands.Cog):
             userid = uires["User"]["ID"]
             username = uires["User"]["Username"]
 
-        fname = f'{rootdir}/leaderboards/{int(time())}_histleaderboard-singlehourlypower-{projectid}-{userid}.png'
+        fname = f'{rootdir}/stats/{int(time())}_stats-singlehourlypower-{projectid}-{userid}.png'
 
         success, res = mattapi.gethistleaderboardbyid(projectid)
         if success:
-            leaderboard.singlehourlypower(fname, userid, username, res)
+            stats.singlehourlypower(fname, userid, username, res)
         else:
             await m.edit(content="Something went wrong!")
             return
 
-        await m.edit(content=f"The singlehourlypower Leaderboard for Project: {projectid}", files=[discord.File(fname)])
+        await m.edit(content=f"Singlehourlypower stats from: {username} Project: {projectid}", files=[discord.File(fname)])
 
 
 def setup(bot):
