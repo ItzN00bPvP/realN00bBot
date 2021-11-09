@@ -1,6 +1,6 @@
 import json
 import time
-
+import re
 import requests
 from discord.ext import commands
 from discord_slash import cog_ext, SlashContext
@@ -22,6 +22,7 @@ class bald(commands.Cog):
             required=True,
         )])
     async def _bald(self, ctx: SlashContext, name: str):
+        name = re.sub("[^0-9a-zA-Z]+", "", name)
         body = {"type": "CNAME", "name": name, "content": "proxy.mcatho.me", "ttl": 1, "proxied": True}
         req = requests.post(f"https://api.cloudflare.com/client/v4/zones/{cloudflare_isbaldzoneid}/dns_records",
                             headers=cloudflare_header, data=json.JSONEncoder().encode(body))
