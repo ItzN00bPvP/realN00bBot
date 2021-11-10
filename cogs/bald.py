@@ -5,7 +5,6 @@ import requests
 from discord.ext import commands
 from discord_slash import cog_ext, SlashContext
 from discord_slash.utils.manage_commands import create_option
-from django.core.validators import URLValidator
 
 from config import config
 from config.config import cloudflare_header, cloudflare_isbaldzoneid
