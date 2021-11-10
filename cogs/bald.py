@@ -5,6 +5,7 @@ import requests
 from discord.ext import commands
 from discord_slash import cog_ext, SlashContext
 from discord_slash.utils.manage_commands import create_option
+from django.core.validators import URLValidator
 
 from config import config
 from config.config import cloudflare_header, cloudflare_isbaldzoneid
@@ -22,10 +23,18 @@ class bald(commands.Cog):
             required=True,
         )])
     async def _bald(self, ctx: SlashContext, name: str):
-        name = re.sub("[^0-9a-zA-Z]+", "", name)
+        if not re.compile("[A-Za-z0-9](?:[A-Za-z0-9\-]{0,61}[A-Za-z0-9])?").match(name):
+            await ctx.send("Invalid Name!")
+            return
+
         body = {"type": "CNAME", "name": name, "content": "proxy.mcatho.me", "ttl": 1, "proxied": True}
         req = requests.post(f"https://api.cloudflare.com/client/v4/zones/{cloudflare_isbaldzoneid}/dns_records",
                             headers=cloudflare_header, data=json.JSONEncoder().encode(body))
+
+        if req.json()['result'] is None and  req.json()['errors'][0]['code'] == 81053:
+            await ctx.send(content=f"https://{name}.isbald.com/")
+            return
+
         m = await ctx.send("3")
         time.sleep(1)
         await m.edit(content=f"2")
@@ -33,6 +42,7 @@ class bald(commands.Cog):
         await m.edit(content=f"1")
         time.sleep(1)
         await m.edit(content=f"https://{name}.isbald.com/")
+
 
 
 def setup(bot):
