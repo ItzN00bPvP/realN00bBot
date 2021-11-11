@@ -22,7 +22,7 @@ class bald(commands.Cog):
             required=True,
         )])
     async def _bald(self, ctx: SlashContext, name: str):
-        if not re.compile("[A-Za-z0-9](?:[A-Za-z0-9\-]{0,61}[A-Za-z0-9])?").match(name):
+        if not re.compile("^[A-Za-z0-9](?:[A-Za-z0-9\-]{0,61}[A-Za-z0-9])?$").match(name):
             await ctx.send("Invalid Name!")
             return
 
