@@ -127,12 +127,10 @@ class Microboinc(commands.Cog):
         if not suc:
             await ctx.send(f"Something went wrong: {res}")
             return
+        with open(fname, "w") as f:
+            f.write(res)
 
-        f = open(fname, "w")
-        f.write(res)
-        f.close()
-
-        await ctx.send(f"Here are the results for app: {appid}\nhttps://microboincresults.mcathome.dev/{foname}")
+        await ctx.send(content=f"Here are the results for app: {appid}\nhttps://microboincresults.mcathome.dev/{foname}")
         # , files=[discord.File(fname)])
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_leaderboard, base="microboinc", name="leaderboard", options=[
