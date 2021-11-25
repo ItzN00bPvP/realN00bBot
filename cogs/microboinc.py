@@ -121,17 +121,17 @@ class Microboinc(commands.Cog):
             await notauthorized(ctx)
             return
 
+        m = await ctx.send("fetching data please wait a moment.")
         foname = f'{int(time())}_results{appid}.txt'
         fname = f'{rootdir}/results/{int(time())}_results{appid}.txt'
         suc, res = mattapi.getresultsbyappid(appid)
         if not suc:
-            await ctx.send(f"Something went wrong: {res}")
+            await m.edit(content=f"Something went wrong: {res}")
             return
         with open(fname, "w") as f:
             f.write(res)
 
-        await ctx.send(content=f"Here are the results for app: {appid}\nhttps://microboincresults.mcathome.dev/{foname}")
-        # , files=[discord.File(fname)])
+        await m.edit(content=f"Here are the results for app: {appid}\nhttps://microboincresults.mcathome.dev/{foname}")
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_leaderboard, base="microboinc", name="leaderboard", options=[
         create_option(
