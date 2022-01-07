@@ -1,7 +1,7 @@
 import requests
-from config.config import mcperms_authtoken
+from config.config import apimcathomedev_authtoken
 
-header = {'auth': mcperms_authtoken}
+header = {'auth': apimcathomedev_authtoken}
 
 
 def grantperms(server: str, perms: str, mcname: str, discordid: str):
