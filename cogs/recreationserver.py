@@ -31,7 +31,7 @@ class recreationserver(commands.Cog):
             await ctx.send(f"Something went wrong status: {req.status_code}")
         respjson = req.json()
         address = respjson["address"]
-        await ctx.send(f"Server {project} created.\nProject:```{address}```")
+        await ctx.send(f"Server {project} created.\nServeraddress:```{address}```")
 
 
 
