@@ -14,7 +14,7 @@ class bald(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @cog_ext.cog_slash(guild_ids=config.slash_bald, name="bald", description="If you have a problem this command helps you to fix it.", options=[
+    @cog_ext.cog_slash(guild_ids=config.slash_bald, name="bald", description="Makes some one bald.", options=[
         create_option(
             name="name",
             description="The you want to make bald.",
