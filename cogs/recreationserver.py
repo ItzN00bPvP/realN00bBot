@@ -13,7 +13,7 @@ class recreationserver(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mcperms_grant, base="recreationserver", name="create", options=[
+    @cog_ext.cog_subcommand(guild_ids=config.slash_recreation_create, base="recreationserver", name="create", options=[
         create_option(
             name="project",
             description="The Name of the project / server.",
@@ -26,13 +26,13 @@ class recreationserver(commands.Cog):
         if not re.compile("^[A-Za-z0-9](?:[A-Za-z0-9\-]{0,61}[A-Za-z0-9])?$").match(project):
             await ctx.send("Invalid Name!")
             return
-        req = requests.request("POST", f"https://api.mcathome.dev/recreationserver/create/{project}/", headers={'auth': config.apimcathomedev_authtoken})
+        req = requests.request("POST", f"https://api.mcathome.dev/recreationserver/create/{project}/",
+                               headers={'auth': config.apimcathomedev_authtoken})
         if req.status_code != 200:
             await ctx.send(f"Something went wrong status: {req.status_code}")
         respjson = req.json()
         address = respjson["address"]
         await ctx.send(f"Server {project} created.\nServeraddress:```{address}```")
-
 
 
 def setup(bot):
