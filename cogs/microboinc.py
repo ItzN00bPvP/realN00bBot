@@ -185,7 +185,7 @@ class Microboinc(commands.Cog):
             await ctx.send("Something went wrong:\n" + res)
             return
         await ctx.send(content=f"The process of the Project: {res['Name']}\n"
-                               f"{res['TotalDone']} / {res['TotalGenerated']} ({res['TotalDone'] / res['TotalGenerated'] * 100}%)")
+                               f"{res['TotalDone']} / {res['TotalGenerated']} ({(res['TotalDone'] / res['TotalGenerated'] * 100) if res['TotalGenerated'] != 0 else 0}%)")
 
 #
 
