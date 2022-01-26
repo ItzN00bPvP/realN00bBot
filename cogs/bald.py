@@ -7,7 +7,7 @@ from discord_slash import cog_ext, SlashContext
 from discord_slash.utils.manage_commands import create_option
 
 from config import config
-from config.config import cloudflare_header, cloudflare_isbaldzoneid
+from config.config import cloudflare_header, cloudflare_isbaldzoneid, roleslevel
 
 
 class bald(commands.Cog):
@@ -21,6 +21,7 @@ class bald(commands.Cog):
             option_type=3,
             required=True,
         )])
+    @commands.has_any_role(*roleslevel.member)
     async def _bald(self, ctx: SlashContext, name: str):
         if not re.compile("^[A-Za-z0-9](?:[A-Za-z0-9\-]{0,61}[A-Za-z0-9])?$").match(name):
             await ctx.send("Invalid Name!")
