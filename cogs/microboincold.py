@@ -162,7 +162,7 @@ class Microboinc(commands.Cog):
         if type == "1":
             success, res = microboincapiold.getleaderboardbyid(projectid)
             if success:
-                leaderboard.graph(fname, projectid, res)
+                leaderboardold.graph(fname, projectid, res)
             else:
                 await ctx.send("Something went wrong!")
                 return
