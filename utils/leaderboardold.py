@@ -6,11 +6,11 @@ def graph(file, projectid, data: json):
     inputdata = []
     ano = []
 
-    for U in data['entries']:
-        username = U['displayName']
-        points_all = U['totalPoints']
-        points_valid = U['validatedPoints']
-        points_invalid = U['invalidatedPoints']
+    for U in data['Leaderboard']:
+        username = U['User']['Username']
+        points_all = U['Points']
+        points_valid = U['ValidatedPoints']
+        points_invalid = U['InvalidatedPoints']
         pending = points_all - points_valid - points_invalid
         ano.append({
             "y": username,
@@ -24,7 +24,7 @@ def graph(file, projectid, data: json):
         inputdata.append([username, points_valid, pending, points_invalid])
 
     df = pd.DataFrame(inputdata, columns=["User", "good", "pending", "bad"])
-    fig = px.bar(df, title=f"Leaderboard for Project {data['projectName']} ({projectid})", orientation='h', y='User',
+    fig = px.bar(df, title=f"Leaderboard for Project {projectid}", orientation='h', y='User',
                  x=['good', 'pending', 'bad'], labels=dict(index="Users", value="Tasks", variable="Task stats"))
 
     fig._data[0]["marker"]['color'] = "rgba(43, 158, 0, 1)"

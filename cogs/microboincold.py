@@ -6,7 +6,7 @@ from discord_slash.utils.manage_commands import create_option, create_choice
 
 from config import config
 from main import notauthorized
-from utils import stats, leaderboard, microboincapi
+from utils import microboincapiold, leaderboardold, stats
 from config.config import rootdir, apikeyselfcreationisallowed
 
 
@@ -14,7 +14,7 @@ class Microboinc(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_createapikey, base="microboinc", name="createapikey", options=[
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_createapikey, base="microboinc-old", name="createapikey", options=[
         create_option(
             name="nickname",
             description="The nickname for microboinc!",
@@ -29,8 +29,6 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_createapikay(self, ctx: SlashContext, nickname: str, user: discord.Member = None):
-        await ctx.send("not availabe yet")
-        return;
         apifor = ctx.author
         if user is not None and user != ctx.author:
             if not microboincapiold.isapilevelbyid(ctx.author_id, 2):
@@ -58,7 +56,7 @@ class Microboinc(commands.Cog):
                                                 f"Nickname: {nickname}\n"
                                                 f"API-Key: {apikey}")
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_regenapikey, base="microboinc", name="regenapikey", options=[
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_regenapikey, base="microboinc-old", name="regenapikey", options=[
         create_option(
             name="user",
             description="Only needed if you want to regen an API-Key for some one else!",
@@ -67,8 +65,6 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_regenapikey(self, ctx: SlashContext, user: discord.Member = None):
-        await ctx.send("not availabe yet")
-        return;
         apifor = ctx.author
         if user is not None and user != ctx.author:
             if not microboincapiold.isapilevelbyid(ctx.author_id, 4):
@@ -91,7 +87,7 @@ class Microboinc(commands.Cog):
                                                 f"Microboinc account created for {apifor.mention}:\n"
                                                 f"API-Key: {apikey}")
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_deletebyid, base="microboinc", name="deletebyid", options=[
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_deletebyid, base="microboinc-old", name="deletebyid", options=[
         create_option(
             name="user",
             description="The User you want to delete.",
@@ -100,8 +96,6 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_deletebyid(self, ctx: SlashContext, user: discord.Member):
-        await ctx.send("not availabe yet")
-        return;
         if not microboincapiold.isapilevelbyid(ctx.author_id, 3):
             await notauthorized(ctx)
             return
@@ -114,7 +108,7 @@ class Microboinc(commands.Cog):
 
         await ctx.send(content=f"User({user.mention}) has been deleted.")
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_results, base="microboinc", name="results", options=[
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_results, base="microboinc-old", name="results", options=[
         create_option(
             name="appid",
             description="The appid form microboinc.",
@@ -123,8 +117,6 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_results(self, ctx: SlashContext, appid: int):
-        await ctx.send("not availabe yet")
-        return;
         if not microboincapiold.isapilevelbyid(ctx.author_id, 1):
             await notauthorized(ctx)
             return
@@ -141,7 +133,7 @@ class Microboinc(commands.Cog):
 
         await m.edit(content=f"Here are the results for app: {appid}\nhttps://microboincresults.mcathome.dev/{foname}")
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_leaderboard, base="microboinc", name="leaderboard", options=[
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_leaderboard, base="microboinc-old", name="leaderboard", options=[
         create_option(
             name="projectid",
             description="The ID from the project you want the leaderboard from!",
@@ -168,17 +160,17 @@ class Microboinc(commands.Cog):
         fname = f'{rootdir}/leaderboards/{int(time())}_leaderboard-{projectid}.png'
 
         if type == "1":
-            success, res = microboincapi.getleaderboardbyid(projectid)
+            success, res = microboincapiold.getleaderboardbyid(projectid)
             if success:
                 leaderboard.graph(fname, projectid, res)
             else:
-                await ctx.send(res)
+                await ctx.send("Something went wrong!")
                 return
         elif type == "2":
             await ctx.send("Not implemented yet!")
         await ctx.send(content=f"The current Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_progress, base="microboinc", name="progress", options=[
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_progress, base="microboinc-old", name="progress", options=[
         create_option(
             name="projectid",
             description="The ID from the project you want the progress for.",
@@ -187,8 +179,6 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_progress(self, ctx: SlashContext, projectid: int):
-        await ctx.send("not availabe yet")
-        return;
         success, res = microboincapiold.getprogressbyappid(projectid)
 
         if not success:
@@ -198,7 +188,7 @@ class Microboinc(commands.Cog):
                                f"{res['TotalDone']} / {res['TotalGenerated']} ({(res['TotalDone'] / res['TotalGenerated'] * 100) if res['TotalGenerated'] != 0 else 0}%)")
 
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_multipower, base="microboinc", name="stats-multipower",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_multipower, base="microboinc-old", name="stats-multipower",
                             options=[
                                 create_option(
                                     name="projectid",
@@ -208,8 +198,6 @@ class Microboinc(commands.Cog):
                                 )
                             ])
     async def _microboinc_stats_multipower(self, ctx: SlashContext, projectid: int):
-        await ctx.send("not availabe yet")
-        return;
         fname = f'{rootdir}/stats/{int(time())}_stats-multipower-{projectid}.png'
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = microboincapiold.gethistleaderboardbyid(projectid)
@@ -221,7 +209,7 @@ class Microboinc(commands.Cog):
 
         await m.edit(content=f"Multipower stats for Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlepower, base="microboinc", name="stats-singlepower",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlepower, base="microboinc-old", name="stats-singlepower",
                             options=[
                                 create_option(
                                     name="projectid",
@@ -242,8 +230,6 @@ class Microboinc(commands.Cog):
                             ])
     async def _microboinc_stats_singlepower(self, ctx: SlashContext, projectid: int, user: discord.User,
                                             internaluseridoverride: int = None):
-        await ctx.send("not availabe yet")
-        return;
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
 
         userid = internaluseridoverride
@@ -266,7 +252,7 @@ class Microboinc(commands.Cog):
 
         await m.edit(content=f"Singlepower stats from: {username} Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalpower, base="microboinc", name="stats-totalpower",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalpower, base="microboinc-old", name="stats-totalpower",
                             options=[
                                 create_option(
                                     name="projectid",
@@ -276,8 +262,6 @@ class Microboinc(commands.Cog):
                                 )
                             ])
     async def _microboinc_stats_totalpower(self, ctx: SlashContext, projectid: int):
-        await ctx.send("not availabe yet")
-        return;
         fname = f'{rootdir}/stats/{int(time())}_stats-totalpower-{projectid}.png'
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = microboincapiold.gethistleaderboardbyid(projectid)
@@ -289,7 +273,7 @@ class Microboinc(commands.Cog):
 
         await m.edit(content=f"Totalpower stats from Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalhourlypower, base="microboinc",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalhourlypower, base="microboinc-old",
                             name="stats-totalhourlypower", options=[
             create_option(
                 name="projectid",
@@ -299,8 +283,6 @@ class Microboinc(commands.Cog):
             )
         ])
     async def _microboinc_stats_totalhourlypower(self, ctx: SlashContext, projectid: int):
-        await ctx.send("not availabe yet")
-        return;
         fname = f'{rootdir}/stats/{int(time())}_stats-totalhourlypower-{projectid}.png'
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = microboincapiold.gethistleaderboardbyid(projectid)
@@ -312,7 +294,7 @@ class Microboinc(commands.Cog):
 
         await m.edit(content=f"Totalhourlypower stats from Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlehourlypower, base="microboinc",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlehourlypower, base="microboinc-old",
                             name="stats-singlehourlypower", options=[
             create_option(
                 name="projectid",
@@ -333,8 +315,6 @@ class Microboinc(commands.Cog):
         ])
     async def _microboinc_stats_singlehourlypower(self, ctx: SlashContext, projectid: int, user: discord.User,
                                                   internaluseridoverride: int = None):
-        await ctx.send("not availabe yet")
-        return;
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
 
         userid = internaluseridoverride
