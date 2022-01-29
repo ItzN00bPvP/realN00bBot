@@ -39,7 +39,7 @@ def gethistleaderboardbyid(appid: int):
         return False, "App not found!"
     return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
 
-def gethistleaderboardbyidforuser(appid: int, discordid: int):
+def getleaderboardbyidforuser(appid: int, discordid: int):
     r = requests.get(url=f"{microboincapi_endpoint}/leaderboards/byproject/{appid}/{discordid} ", headers=header)
 
     if r.status_code == 200:

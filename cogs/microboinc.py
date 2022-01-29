@@ -184,6 +184,54 @@ class Microboinc(commands.Cog):
             return
         await ctx.send(content=f"The current Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_userleaderboard, base="microboinc", name="userleaderboard", options=[
+        create_option(
+            name="projectid",
+            description="The ID from the project you want the leaderboard from!",
+            option_type=4,
+            required=True
+        ), create_option(
+                name="user",
+                description="The User you want the stats for.",
+                option_type=6,
+                required=True
+            ), create_option(
+            name="type",
+            description="The type of chard you want!",
+            option_type=3,
+            required=False,
+            choices=[
+                create_choice(
+                    name="Graph",
+                    value="1"
+                ),
+                create_choice(
+                    name="Pie",
+                    value="2"
+                )
+            ]
+        )
+    ])
+    async def _microboinc_leaderboard(self, ctx: SlashContext, projectid: int, user: discord.User, type: str = "1"):
+        fname = f'{rootdir}/leaderboards/{int(time())}_userleaderboard-{projectid}.png'
+        if type == "1":
+            success, res = microboincapi.getleaderboardbyidforuser(projectid, user.id)
+
+            if not success:
+                await ctx.send(res)
+                return
+
+            if not res["entries"]:
+                await ctx.send("There is not data yet!")
+                return
+
+            leaderboard.graph(fname, projectid, res)
+
+        elif type == "2":
+            await ctx.send("Not implemented yet!")
+            return
+        await ctx.send(content=f"The current Leaderboard from {user.mention} for Project: {projectid}", files=[discord.File(fname)])
+
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_progress, base="microboinc", name="progress", options=[
         create_option(
             name="projectid",
