@@ -42,7 +42,7 @@ class Microboinc(commands.Cog):
                 return
             apifor = user
 
-        success, res = microboincapiold.register(nickname, apifor.id)
+        success, res = microboincapi.register(nickname, apifor.id)
         if not success:
             await ctx.send(res)
             return
