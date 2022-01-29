@@ -1,22 +1,13 @@
 import pandas as pd
 import plotly.express as px
 from datetime import datetime
-import time
 
 def multipower(file, projectid, data):
     inputdata = {}
 
     for U in data['entries']:
         username = U['displayName']
-        #points_all = U['totalPoints']
         points_valid = U['validStamps']
-        #points_invalid = U['invalidatedPoints']
-        #points_pending = points_all - points_valid - points_invalid
-
-        #points.setdefault(username, {})["points_all"] += 1
-        #points.setdefault(username, {})["points_valid"] += 1
-        #points.setdefault(username, {})["points_invalid"] += 1
-        #points.setdefault(username, {})["points_pending"] += 1
 
         p = 1
         for ts in points_valid:
@@ -36,7 +27,7 @@ def multipower(file, projectid, data):
 
     fig.write_image(file, width=1920, height=1080)
 
-def singlepower(file, projectid, userid, username, data):
+def singlepoints(file, projectid, userid, data):
     l1, l2, l3 = 0, 0, 0
     inputdata = {}
 
@@ -79,11 +70,11 @@ def singlepower(file, projectid, userid, username, data):
     df = pd.DataFrame.from_dict(inputdata)
     df.sort_index(axis=0, inplace=True)
 
-    fig = px.line(df, title=f"Points over time from: {username} Project: {projectid}",
+    fig = px.line(df, title=f"Points over time from: {username} Project: {data['projectName']} ({projectid})",
                   labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
-    if 0 < len(fig._data): fig._data[0]["line"]['color'] = "rgba(0, 149, 166, 1)"
-    if 1 < len(fig._data): fig._data[1]["line"]['color'] = "rgba(43, 158, 0, 1)"
-    if 2 < len(fig._data): fig._data[2]["line"]['color'] = "rgba(126, 2, 184, 1)"
+    if 0 < len(fig._data): fig._data[0]['line']['color'] = "rgba(0, 149, 166, 1)"
+    if 1 < len(fig._data): fig._data[1]['line']['color'] = "rgba(43, 158, 0, 1)"
+    if 2 < len(fig._data): fig._data[2]['line']['color'] = "rgba(126, 2, 184, 1)"
     fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
                       font_color='rgba(196, 222, 255, 1)', legend_bgcolor='rgba(76, 91, 115, 1)', font_size=24)
     fig.update_traces(connectgaps=True)
@@ -91,11 +82,7 @@ def singlepower(file, projectid, userid, username, data):
 
     fig.write_image(file, width=1920, height=1080)
 
-def totalpower(file, projectid, data):
-    start = time.process_time()
-    #elapsed_time = time.process_time() - start
-    #print(f"looping sorting time: {elapsed_time}")
-
+def totalpoints(file, projectid, data):
     inputdata = {}
 
     total_submittedstamps = []
@@ -112,7 +99,6 @@ def totalpower(file, projectid, data):
     total_validstamps.sort()
     total_invalidstamps.sort()
 
-
     p = 1
     for ts in total_submittedstamps:
         inputdata.setdefault("points", {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
@@ -126,18 +112,14 @@ def totalpower(file, projectid, data):
         inputdata.setdefault("invalidpoints", {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
         p += 1
 
-    elapsed_time = time.process_time() - start
-    print(f"looping sorting time: {elapsed_time}")
-
     df = pd.DataFrame.from_dict(inputdata)
     #df.sort_index(axis=0, inplace=True)
 
-
-    fig = px.line(df, title=f"Total power over time Project: {projectid}",
+    fig = px.line(df, title=f"Total points over time for Project: {data['projectName']} ({projectid})",
                   labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
-    if 0 < len(fig._data): fig._data[0]["line"]['color'] = "rgba(0, 149, 166, 1)"
-    if 1 < len(fig._data): fig._data[1]["line"]['color'] = "rgba(43, 158, 0, 1)"
-    if 2 < len(fig._data): fig._data[2]["line"]['color'] = "rgba(126, 2, 184, 1)"
+    if 0 < len(fig._data): fig._data[0]['line']['color'] = "rgba(0, 149, 166, 1)"
+    if 1 < len(fig._data): fig._data[1]['line']['color'] = "rgba(43, 158, 0, 1)"
+    if 2 < len(fig._data): fig._data[2]['line']['color'] = "rgba(126, 2, 184, 1)"
     fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
                       font_color='rgba(196, 222, 255, 1)', legend_bgcolor='rgba(76, 91, 115, 1)', font_size=24)
     fig.update_traces(connectgaps=True)
@@ -146,7 +128,7 @@ def totalpower(file, projectid, data):
 
 
 
-def totalhourlypower(file, projectid, data):
+def totahourlypower(file, projectid, data):
     last = {}
     inputdata = {}
 

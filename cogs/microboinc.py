@@ -29,22 +29,22 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_createapikay(self, ctx: SlashContext, nickname: str, user: discord.Member = None):
-        await ctx.send("not availabe yet")
-        return;
         apifor = ctx.author
+        if (user is None or user == ctx.author) and not apikeyselfcreationisallowed:
+            await ctx.send("This feature is currently disabled!")
+            return
+
         if user is not None and user != ctx.author:
-            if not microboincapiold.isapilevelbyid(ctx.author_id, 2):
+            await ctx.send("Not implementet yet!")
+            return
+            if not microboincapi.isapilevelbyid(ctx.author_id, 2):
                 await notauthorized(ctx)
                 return
             apifor = user
-        else:
-            if not apikeyselfcreationisallowed:
-                await ctx.send("This feature is currently disabled!")
-                return
 
         success, res = microboincapiold.register(nickname, apifor.id)
         if not success:
-            await ctx.send("Something went wrong:\n" + res)
+            await ctx.send(res)
             return
 
         apikey = res
@@ -205,8 +205,7 @@ class Microboinc(commands.Cog):
         await ctx.send(content=f"The process of the Project: {res['Name']}\n"
                                f"{res['TotalDone']} / {res['TotalGenerated']} ({(res['TotalDone'] / res['TotalGenerated'] * 100) if res['TotalGenerated'] != 0 else 0}%)")
 
-
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_multipower, base="microboinc", name="stats-multipower",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalpoints, base="microboinc", name="stats-totalpoints",
                             options=[
                                 create_option(
                                     name="projectid",
@@ -215,9 +214,9 @@ class Microboinc(commands.Cog):
                                     required=True
                                 )
                             ])
-    async def _microboinc_stats_multipower(self, ctx: SlashContext, projectid: int):
-        fname = f'{rootdir}/stats/{int(time())}_stats-multipower-{projectid}.png'
-        m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
+    async def _microboinc_stats_totalpoints(self, ctx: SlashContext, projectid: int):
+        fname = f'{rootdir}/stats/{int(time())}_stats-multipoints-{projectid}.png'
+        m = await ctx.send("Please wait a moment, it can take a while to generate the Image.")
         success, res = microboincapi.gethistleaderboardbyid(projectid)
 
         if not success:
@@ -228,10 +227,10 @@ class Microboinc(commands.Cog):
             await m.edit(content="There is not data yet!")
             return
 
-        stats.multipower(fname, projectid, res)
-        await m.edit(content=f"Multipower stats for Project: {projectid}", files=[discord.File(fname)])
+        stats.totalpoints(fname, projectid, res)
+        await m.edit(content=f"Total points stats for Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlepower, base="microboinc", name="stats-singlepower",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlepoints, base="microboinc", name="stats-singlepoints",
                             options=[
                                 create_option(
                                     name="projectid",
@@ -245,21 +244,22 @@ class Microboinc(commands.Cog):
                                     required=True
                                 )
                             ])
-    async def _microboinc_stats_singlepower(self, ctx: SlashContext, projectid: int, user: discord.User):
-        m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
+    async def _microboinc_stats_singlepoints(self, ctx: SlashContext, projectid: int, user: discord.User):
+        m = await ctx.send("Please wait a moment, it can take a while to generate the Image.")
         userid = user.id
 
-        fname = f'{rootdir}/stats/{int(time())}_stats-singlepower-{projectid}-{userid}.png'
+        fname = f'{rootdir}/stats/{int(time())}_stats-singlepoints-{projectid}-{userid}.png'
 
         success, res = microboincapi.gethistleaderboardbyid(projectid)
         if not success:
             await m.edit(content="Something went wrong!")
             return
 
-        stats.singlepower(fname, projectid, userid, res)
-        await m.edit(content=f"Singlepower stats from: {res} Project: {projectid}", files=[discord.File(fname)])
+        stats.singlepoints(fname, projectid, userid, res)
+        await m.edit(content=f"Single points stats from: {user.mention} Project: {projectid}",
+                     files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalpower, base="microboinc", name="stats-totalpower",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalpoints, base="microboinc", name="stats-totalpoints",
                             options=[
                                 create_option(
                                     name="projectid",
@@ -268,8 +268,8 @@ class Microboinc(commands.Cog):
                                     required=True
                                 )
                             ])
-    async def _microboinc_stats_totalpower(self, ctx: SlashContext, projectid: int):
-        fname = f'{rootdir}/stats/{int(time())}_stats-totalpower-{projectid}.png'
+    async def _microboinc_stats_totalpoints(self, ctx: SlashContext, projectid: int):
+        fname = f'{rootdir}/stats/{int(time())}_stats-totalpoints-{projectid}.png'
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = microboincapi.gethistleaderboardbyid(projectid)
 
@@ -277,12 +277,12 @@ class Microboinc(commands.Cog):
             await m.edit(content="Something went wrong!")
             return
 
-        stats.totalpower(fname, projectid, res)
+        stats.totalpoints(fname, projectid, res)
 
-        await m.edit(content=f"Totalpower stats from Project: {projectid}", files=[discord.File(fname)])
+        await m.edit(content=f"Total points from Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalhourlypower, base="microboinc",
-                            name="stats-totalhourlypower", options=[
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalhourlypoints, base="microboinc",
+                            name="stats-totalhourlypoints", options=[
             create_option(
                 name="projectid",
                 description="The ID of the project you want the stats for.",
@@ -290,22 +290,22 @@ class Microboinc(commands.Cog):
                 required=True
             )
         ])
-    async def _microboinc_stats_totalhourlypower(self, ctx: SlashContext, projectid: int):
+    async def _microboinc_stats_totalhourlypoints(self, ctx: SlashContext, projectid: int):
         await ctx.send("not availabe yet")
         return;
-        fname = f'{rootdir}/stats/{int(time())}_stats-totalhourlypower-{projectid}.png'
+        fname = f'{rootdir}/stats/{int(time())}_stats-totalhourlypoints-{projectid}.png'
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = microboincapiold.gethistleaderboardbyid(projectid)
         if success:
-            stats.totalhourlypower(fname, projectid, res)
+            stats.totalhourlypoints(fname, projectid, res)
         else:
             await m.edit(content="Something went wrong!")
             return
 
-        await m.edit(content=f"Totalhourlypower stats from Project: {projectid}", files=[discord.File(fname)])
+        await m.edit(content=f"Totalhourlypoins stats from Project: {projectid}", files=[discord.File(fname)])
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlehourlypower, base="microboinc",
-                            name="stats-singlehourlypower", options=[
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlehourlypoints, base="microboinc",
+                            name="stats-singlehourlypoints", options=[
             create_option(
                 name="projectid",
                 description="The ID of the project you want the stats for.",
@@ -323,8 +323,8 @@ class Microboinc(commands.Cog):
                 required=False
             )
         ])
-    async def _microboinc_stats_singlehourlypower(self, ctx: SlashContext, projectid: int, user: discord.User,
-                                                  internaluseridoverride: int = None):
+    async def _microboinc_stats_singlehourlypoints(self, ctx: SlashContext, projectid: int, user: discord.User,
+                                                   internaluseridoverride: int = None):
         await ctx.send("not availabe yet")
         return;
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
@@ -339,16 +339,17 @@ class Microboinc(commands.Cog):
             userid = uires["User"]["ID"]
             username = uires["User"]["Username"]
 
-        fname = f'{rootdir}/stats/{int(time())}_stats-singlehourlypower-{projectid}-{userid}.png'
+        fname = f'{rootdir}/stats/{int(time())}_stats-singlehourlypoints-{projectid}-{userid}.png'
 
         success, res = microboincapiold.gethistleaderboardbyid(projectid)
         if success:
-            stats.singlehourlypower(fname, projectid, userid, username, res)
+            stats.singlehourlypoints(fname, projectid, userid, username, res)
         else:
             await m.edit(content="Something went wrong!")
             return
 
-        await m.edit(content=f"Singlehourlypower stats from: {username} Project: {projectid}", files=[discord.File(fname)])
+        await m.edit(content=f"Singlehourlypoints stats from: {username} Project: {projectid}",
+                     files=[discord.File(fname)])
 
 
 def setup(bot):
