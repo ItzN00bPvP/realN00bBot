@@ -243,38 +243,21 @@ class Microboinc(commands.Cog):
                                     description="The User you want the stats for.",
                                     option_type=6,
                                     required=True
-                                ), create_option(
-                                    name="internaluseridoverride",
-                                    description="The internal ID from the user(overrides the discord user)",
-                                    option_type=4,
-                                    required=False
                                 )
                             ])
-    async def _microboinc_stats_singlepower(self, ctx: SlashContext, projectid: int, user: discord.User,
-                                            internaluseridoverride: int = None):
-        await ctx.send("not availabe yet")
-        return;
+    async def _microboinc_stats_singlepower(self, ctx: SlashContext, projectid: int, user: discord.User):
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
+        userid = user.id
 
-        userid = internaluseridoverride
-        username = f"OVERRIDE-{userid}"
-        if internaluseridoverride is None:
-            uisuc, uires = microboincapiold.getuserinfobyid(user.id)
-            if not uisuc:
-                await m.edit(content=f"User not found: {user.name}({user.id})")
-                return
-            userid = uires["User"]["ID"]
-            username = uires["User"]["Username"]
         fname = f'{rootdir}/stats/{int(time())}_stats-singlepower-{projectid}-{userid}.png'
 
-        success, res = microboincapiold.gethistleaderboardbyid(projectid)
-        if success:
-            stats.singlepower(fname, projectid, userid, username, res)
-        else:
+        success, res = microboincapi.gethistleaderboardbyid(projectid)
+        if not success:
             await m.edit(content="Something went wrong!")
             return
 
-        await m.edit(content=f"Singlepower stats from: {username} Project: {projectid}", files=[discord.File(fname)])
+        stats.singlepower(fname, projectid, userid, res)
+        await m.edit(content=f"Singlepower stats from: {res} Project: {projectid}", files=[discord.File(fname)])
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalpower, base="microboinc", name="stats-totalpower",
                             options=[
@@ -286,16 +269,15 @@ class Microboinc(commands.Cog):
                                 )
                             ])
     async def _microboinc_stats_totalpower(self, ctx: SlashContext, projectid: int):
-        await ctx.send("not availabe yet")
-        return;
         fname = f'{rootdir}/stats/{int(time())}_stats-totalpower-{projectid}.png'
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
-        success, res = microboincapiold.gethistleaderboardbyid(projectid)
-        if success:
-            stats.totalpower(fname, projectid, res)
-        else:
+        success, res = microboincapi.gethistleaderboardbyid(projectid)
+
+        if not success:
             await m.edit(content="Something went wrong!")
             return
+
+        stats.totalpower(fname, projectid, res)
 
         await m.edit(content=f"Totalpower stats from Project: {projectid}", files=[discord.File(fname)])
 

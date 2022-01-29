@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.express as px
 from datetime import datetime
+import time
 
 def multipower(file, projectid, data):
     inputdata = {}
@@ -41,7 +42,7 @@ def singlepower(file, projectid, userid, username, data):
 
     for U in data['entries']:
         username = U['displayName']
-        #points_all = U['totalPoints']
+        points_all = U['totalPoints']
         points_valid = U['validStamps']
         points_invalid = U['invalidatedPoints']
         points_pending = points_all - points_valid - points_invalid
@@ -91,39 +92,46 @@ def singlepower(file, projectid, userid, username, data):
     fig.write_image(file, width=1920, height=1080)
 
 def totalpower(file, projectid, data):
-    last = {}
+    start = time.process_time()
+    #elapsed_time = time.process_time() - start
+    #print(f"looping sorting time: {elapsed_time}")
+
     inputdata = {}
-    sps, svps, sivps = 0, 0, 0
+
+    total_submittedstamps = []
+    total_validstamps = []
+    total_invalidstamps = []
 
 
-    for l in data.split("\n"):
-        uid, ps, vps, ivps, ts = l.split(" ")
-        ps = int(ps)
-        vps = int(vps)
-        ivps = int(ivps)
-        ts = int(ts)
+    for U in data['entries']:
+        total_submittedstamps += U['submittedStamps']
+        total_validstamps += U['validStamps']
+        total_invalidstamps += U['invalidStamps']
 
-        if ps > last.setdefault(uid, {}).setdefault("ps", 0):
-            sps += 1
-        elif vps > last.setdefault(uid, {}).setdefault("vps", 0):
-            svps += 1
-        elif ivps > last.setdefault(uid, {}).setdefault("ivps", 0):
-            sivps += 1
+    total_submittedstamps.sort()
+    total_validstamps.sort()
+    total_invalidstamps.sort()
 
-        iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()
 
-        inputdata.setdefault("points", {})[iso] = sps
-        inputdata.setdefault("validpoints", {})[iso] = svps
-        inputdata.setdefault("invalidpoints", {})[iso] = sivps
+    p = 1
+    for ts in total_submittedstamps:
+        inputdata.setdefault("points", {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
+        p += 1
+    p = 1
+    for ts in total_validstamps:
+        inputdata.setdefault("validpoints", {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
+        p += 1
+    p = 1
+    for ts in total_invalidstamps:
+        inputdata.setdefault("invalidpoints", {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
+        p += 1
 
-        last[uid]["ps"] = ps
-        last[uid]["vps"] = vps
-        last[uid]["ivps"] = ivps
-
-    print(inputdata)
+    elapsed_time = time.process_time() - start
+    print(f"looping sorting time: {elapsed_time}")
 
     df = pd.DataFrame.from_dict(inputdata)
-    df.sort_index(axis=0, inplace=True)
+    #df.sort_index(axis=0, inplace=True)
+
 
     fig = px.line(df, title=f"Total power over time Project: {projectid}",
                   labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
