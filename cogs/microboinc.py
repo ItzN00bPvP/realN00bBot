@@ -169,13 +169,20 @@ class Microboinc(commands.Cog):
 
         if type == "1":
             success, res = microboincapi.getleaderboardbyid(projectid)
-            if success:
-                leaderboard.graph(fname, projectid, res)
-            else:
+
+            if not success:
                 await ctx.send(res)
                 return
+
+            if not res["entries"]:
+                await ctx.send("There is not data yet!")
+                return
+
+            leaderboard.graph(fname, projectid, res)
+
         elif type == "2":
             await ctx.send("Not implemented yet!")
+            return
         await ctx.send(content=f"The current Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_progress, base="microboinc", name="progress", options=[
@@ -194,6 +201,7 @@ class Microboinc(commands.Cog):
         if not success:
             await ctx.send("Something went wrong:\n" + res)
             return
+
         await ctx.send(content=f"The process of the Project: {res['Name']}\n"
                                f"{res['TotalDone']} / {res['TotalGenerated']} ({(res['TotalDone'] / res['TotalGenerated'] * 100) if res['TotalGenerated'] != 0 else 0}%)")
 
@@ -211,12 +219,16 @@ class Microboinc(commands.Cog):
         fname = f'{rootdir}/stats/{int(time())}_stats-multipower-{projectid}.png'
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = microboincapi.gethistleaderboardbyid(projectid)
-        if success:
-            stats.multipower(fname, projectid, res)
-        else:
+
+        if not success:
             await m.edit(content=res)
             return
 
+        if not res["entries"]:
+            await m.edit(content="There is not data yet!")
+            return
+
+        stats.multipower(fname, projectid, res)
         await m.edit(content=f"Multipower stats for Project: {projectid}", files=[discord.File(fname)])
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlepower, base="microboinc", name="stats-singlepower",

@@ -22,13 +22,11 @@ def multipower(file, projectid, data):
             inputdata.setdefault(username, {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
             p += 1
 
-    print(inputdata)
-
     df = pd.DataFrame.from_dict(inputdata)
     df.sort_index(axis=0, inplace=True)
     df.sort_index(axis=1, inplace=True)
 
-    fig = px.line(df, title=f'Valid points over time Project: {projectid}',
+    fig = px.line(df, title=f'Valid points over time for Project {data["projectName"]} ({projectid})',
                   labels={"index": "Time", "value": "Valid tasks", "variable": "Users"})
     fig.update_layout(plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
                       font_color='rgba(196, 222, 255, 1)', legend_bgcolor='rgba(76, 91, 115, 1)', font_size=24)
@@ -40,6 +38,29 @@ def multipower(file, projectid, data):
 def singlepower(file, projectid, userid, username, data):
     l1, l2, l3 = 0, 0, 0
     inputdata = {}
+
+    for U in data['entries']:
+        username = U['displayName']
+        #points_all = U['totalPoints']
+        points_valid = U['validStamps']
+        points_invalid = U['invalidatedPoints']
+        points_pending = points_all - points_valid - points_invalid
+
+        #points.setdefault(username, {})["points_all"] += 1
+        #points.setdefault(username, {})["points_valid"] += 1
+        #points.setdefault(username, {})["points_invalid"] += 1
+        #points.setdefault(username, {})["points_pending"] += 1
+
+        p = 1
+        for ts in points_valid:
+            inputdata.setdefault(username, {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
+            p += 1
+        p = 1
+        for ts in points_pending:
+            inputdata.setdefault(username, {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
+            p += 1
+
+
     for l in data.split("\n"):
         uid, ps, vps, ivps, ts = l.split(" ")
         ps = int(ps)
