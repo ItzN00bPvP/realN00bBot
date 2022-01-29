@@ -6,7 +6,7 @@ from discord_slash.utils.manage_commands import create_option, create_choice
 
 from config import config
 from main import notauthorized
-from utils import microboincapiold, leaderboardold, stats
+from utils import microboincapiold, leaderboardold, statsold
 from config.config import rootdir, apikeyselfcreationisallowed
 
 
@@ -202,7 +202,7 @@ class Microboinc(commands.Cog):
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = microboincapiold.gethistleaderboardbyid(projectid)
         if success:
-            stats.multipower(fname, projectid, res)
+            statsold.multipower(fname, projectid, res)
         else:
             await m.edit(content="Something went wrong!")
             return
@@ -245,7 +245,7 @@ class Microboinc(commands.Cog):
 
         success, res = microboincapiold.gethistleaderboardbyid(projectid)
         if success:
-            stats.singlepower(fname, projectid, userid, username, res)
+            statsold.singlepower(fname, projectid, userid, username, res)
         else:
             await m.edit(content="Something went wrong!")
             return
@@ -266,7 +266,7 @@ class Microboinc(commands.Cog):
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = microboincapiold.gethistleaderboardbyid(projectid)
         if success:
-            stats.totalpower(fname, projectid, res)
+            statsold.totalpower(fname, projectid, res)
         else:
             await m.edit(content="Something went wrong!")
             return
@@ -287,7 +287,7 @@ class Microboinc(commands.Cog):
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
         success, res = microboincapiold.gethistleaderboardbyid(projectid)
         if success:
-            stats.totalhourlypower(fname, projectid, res)
+            statsold.totalhourlypower(fname, projectid, res)
         else:
             await m.edit(content="Something went wrong!")
             return
@@ -331,7 +331,7 @@ class Microboinc(commands.Cog):
 
         success, res = microboincapiold.gethistleaderboardbyid(projectid)
         if success:
-            stats.singlehourlypower(fname, projectid, userid, username, res)
+            statsold.singlehourlypower(fname, projectid, userid, username, res)
         else:
             await m.edit(content="Something went wrong!")
             return

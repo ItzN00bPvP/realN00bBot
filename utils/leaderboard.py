@@ -5,6 +5,7 @@ import plotly.express as px
 def graph(file, projectid, data: json):
     inputdata = []
     ano = []
+
     for U in data['entries']:
         username = U['displayName']
         points_all = U['totalPoints']

@@ -208,15 +208,13 @@ class Microboinc(commands.Cog):
                                 )
                             ])
     async def _microboinc_stats_multipower(self, ctx: SlashContext, projectid: int):
-        await ctx.send("not availabe yet")
-        return;
         fname = f'{rootdir}/stats/{int(time())}_stats-multipower-{projectid}.png'
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
-        success, res = microboincapiold.gethistleaderboardbyid(projectid)
+        success, res = microboincapi.gethistleaderboardbyid(projectid)
         if success:
             stats.multipower(fname, projectid, res)
         else:
-            await m.edit(content="Something went wrong!")
+            await m.edit(content=res)
             return
 
         await m.edit(content=f"Multipower stats for Project: {projectid}", files=[discord.File(fname)])
