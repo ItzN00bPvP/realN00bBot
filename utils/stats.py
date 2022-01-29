@@ -4,15 +4,25 @@ from datetime import datetime
 
 def multipower(file, projectid, data):
     inputdata = {}
-    last = {}
-    for l in data.split("\n"):
-        uid, ps, vps, ivps, ts = l.split(" ")
-        vps = int(vps)
 
-        if vps > last.setdefault(uid, 0):
-            inputdata.setdefault(int(uid), {})[
-                datetime.fromtimestamp(int(ts)).replace(microsecond=0, second=0).isoformat()] = vps
-            last[uid] = vps
+    for U in data['entries']:
+        username = U['displayName']
+        #points_all = U['totalPoints']
+        points_valid = U['validStamps']
+        #points_invalid = U['invalidatedPoints']
+        #points_pending = points_all - points_valid - points_invalid
+
+        #points.setdefault(username, {})["points_all"] += 1
+        #points.setdefault(username, {})["points_valid"] += 1
+        #points.setdefault(username, {})["points_invalid"] += 1
+        #points.setdefault(username, {})["points_pending"] += 1
+
+        p = 1
+        for ts in points_valid:
+            inputdata.setdefault(username, {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
+            p += 1
+
+    print(inputdata)
 
     df = pd.DataFrame.from_dict(inputdata)
     df.sort_index(axis=0, inplace=True)
@@ -88,6 +98,8 @@ def totalpower(file, projectid, data):
         last[uid]["ps"] = ps
         last[uid]["vps"] = vps
         last[uid]["ivps"] = ivps
+
+    print(inputdata)
 
     df = pd.DataFrame.from_dict(inputdata)
     df.sort_index(axis=0, inplace=True)
