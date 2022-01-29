@@ -47,3 +47,12 @@ def gethistleaderboardbyidforuser(appid: int, discordid: int):
     elif r.status_code == 404:
         return False, "App not found!"
     return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
+
+def getresultsbyappid(appid: int):
+    r = requests.get(url=f"{microboincapi_endpoint}/results/byprojectid/{appid}", headers=header)
+
+    if r.status_code == 200:
+        return True, str(r.content)[2:-1].replace("\\n", "\n")
+    elif r.status_code == 404:
+        return False, "App not found!"
+    return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)

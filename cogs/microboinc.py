@@ -101,7 +101,7 @@ class Microboinc(commands.Cog):
     ])
     async def _microboinc_deletebyid(self, ctx: SlashContext, user: discord.Member):
         await ctx.send("not availabe yet")
-        return;
+        return
         if not microboincapiold.isapilevelbyid(ctx.author_id, 3):
             await notauthorized(ctx)
             return
@@ -123,16 +123,15 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_results(self, ctx: SlashContext, appid: int):
-        await ctx.send("not availabe yet")
-        return;
-        if not microboincapiold.isapilevelbyid(ctx.author_id, 1):
-            await notauthorized(ctx)
-            return
+
+        #if not microboincapiold.isapilevelbyid(ctx.author_id, 1):
+        #    await notauthorized(ctx)
+        #    return
 
         m = await ctx.send("fetching data please wait a moment.")
         foname = f'{int(time())}_results{appid}.txt'
         fname = f'{rootdir}/results/{int(time())}_results{appid}.txt'
-        suc, res = microboincapiold.getresultsbyappid(appid)
+        suc, res = microboincapi.getresultsbyappid(appid)
         if not suc:
             await m.edit(content=f"Something went wrong: {res}")
             return
