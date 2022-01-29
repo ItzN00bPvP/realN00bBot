@@ -212,7 +212,7 @@ class Microboinc(commands.Cog):
             ]
         )
     ])
-    async def _microboinc_leaderboard(self, ctx: SlashContext, projectid: int, user: discord.User, type: str = "1"):
+    async def _microboinc_userleaderboard(self, ctx: SlashContext, projectid: int, user: discord.User, type: str = "1"):
         fname = f'{rootdir}/leaderboards/{int(time())}_userleaderboard-{projectid}.png'
         if type == "1":
             success, res = microboincapi.getleaderboardbyidforuser(projectid, user.id)
