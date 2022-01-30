@@ -131,7 +131,7 @@ class Microboinc(commands.Cog):
         with open(fname, "w") as f:
             f.write(res)
 
-        await m.edit(content=f"Here are the results for app: {appid}\nhttps://microboincresults.mcathome.dev/{foname}")
+        await m.edit(content=f"Here are the results for app: {appid}\nhttps://results.microboinc.com/{foname}")
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_leaderboard, base="microboincold", name="leaderboard", options=[
         create_option(
