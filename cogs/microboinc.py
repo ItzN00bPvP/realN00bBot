@@ -67,7 +67,7 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_regenapikey(self, ctx: SlashContext, user: discord.Member = None):
-        await ctx.send("not availabe yet")
+        await ctx.send("not available yet")
         return;
         apifor = ctx.author
         if user is not None and user != ctx.author:
@@ -100,7 +100,7 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_deletebyid(self, ctx: SlashContext, user: discord.Member):
-        await ctx.send("not availabe yet")
+        await ctx.send("not available yet")
         return
         if not microboincapiold.isapilevelbyid(ctx.author_id, 3):
             await notauthorized(ctx)
@@ -148,7 +148,7 @@ class Microboinc(commands.Cog):
             required=True
         ), create_option(
             name="type",
-            description="The type of chard you want!",
+            description="The type of chart you want!",
             option_type=3,
             required=False,
             choices=[
@@ -197,7 +197,7 @@ class Microboinc(commands.Cog):
                 required=True
             ), create_option(
             name="type",
-            description="The type of chard you want!",
+            description="The type of chart you want!",
             option_type=3,
             required=False,
             choices=[
@@ -241,7 +241,7 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_progress(self, ctx: SlashContext, projectid: int):
-        await ctx.send("not availabe yet")
+        await ctx.send("not available yet")
         return;
         success, res = microboincapiold.getprogressbyappid(projectid)
 
@@ -338,11 +338,9 @@ class Microboinc(commands.Cog):
             )
         ])
     async def _microboinc_stats_totalhourlypoints(self, ctx: SlashContext, projectid: int):
-        await ctx.send("not availabe yet")
-        return;
         fname = f'{rootdir}/stats/{int(time())}_stats-totalhourlypoints-{projectid}.png'
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
-        success, res = microboincapiold.gethistleaderboardbyid(projectid)
+        success, res = microboincapi.gethistleaderboardbyid(projectid)
         if success:
             stats.totalhourlypoints(fname, projectid, res)
         else:
@@ -372,7 +370,7 @@ class Microboinc(commands.Cog):
         ])
     async def _microboinc_stats_singlehourlypoints(self, ctx: SlashContext, projectid: int, user: discord.User,
                                                    internaluseridoverride: int = None):
-        await ctx.send("not availabe yet")
+        await ctx.send("not available yet")
         return;
         m = await ctx.send("Please wait a moment, it can take up to a minute to generate the Image.")
 

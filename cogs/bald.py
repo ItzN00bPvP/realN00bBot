@@ -31,18 +31,17 @@ class bald(commands.Cog):
         req = requests.post(f"https://api.cloudflare.com/client/v4/zones/{cloudflare_isbaldzoneid}/dns_records",
                             headers=cloudflare_header, data=json.JSONEncoder().encode(body))
 
-        if req.json()['result'] is None and  req.json()['errors'][0]['code'] == 81053:
+        if req.json()['result'] is None and req.json()['errors'][0]['code'] == 81053:
             await ctx.send(content=f"https://{name}.isbald.com/")
             return
 
         m = await ctx.send("3")
         time.sleep(1)
-        await m.edit(content=f"2")
+        await m.edit(content="2")
         time.sleep(1)
-        await m.edit(content=f"1")
+        await m.edit(content="1")
         time.sleep(1)
         await m.edit(content=f"https://{name}.isbald.com/")
-
 
 
 def setup(bot):

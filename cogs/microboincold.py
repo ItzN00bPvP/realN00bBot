@@ -10,7 +10,7 @@ from utils import microboincapiold, leaderboardold, statsold
 from config.config import rootdir, apikeyselfcreationisallowed
 
 
-class Microboinc(commands.Cog):
+class Microboincold(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -340,4 +340,4 @@ class Microboinc(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Microboinc(bot))
+    bot.add_cog(Microboincold(bot))

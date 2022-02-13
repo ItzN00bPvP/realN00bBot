@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 
+
 def multipower(file, projectid, data):
     inputdata = {}
 
@@ -11,7 +12,8 @@ def multipower(file, projectid, data):
 
         p = 1
         for ts in points_valid:
-            inputdata.setdefault(username, {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
+            inputdata.setdefault(username, {})[
+                datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
             p += 1
 
     df = pd.DataFrame.from_dict(inputdata)
@@ -27,31 +29,36 @@ def multipower(file, projectid, data):
 
     fig.write_image(file, width=1920, height=1080)
 
+
 def singlepoints(file, projectid, userid, data):
     l1, l2, l3 = 0, 0, 0
     inputdata = {}
 
+    print(data)
+
     for U in data['entries']:
+        print(U)
         username = U['displayName']
         points_all = U['totalPoints']
         points_valid = U['validStamps']
         points_invalid = U['invalidatedPoints']
         points_pending = points_all - points_valid - points_invalid
 
-        #points.setdefault(username, {})["points_all"] += 1
-        #points.setdefault(username, {})["points_valid"] += 1
-        #points.setdefault(username, {})["points_invalid"] += 1
-        #points.setdefault(username, {})["points_pending"] += 1
+        # points.setdefault(username, {})["points_all"] += 1
+        # points.setdefault(username, {})["points_valid"] += 1
+        # points.setdefault(username, {})["points_invalid"] += 1
+        # points.setdefault(username, {})["points_pending"] += 1
 
         p = 1
         for ts in points_valid:
-            inputdata.setdefault(username, {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
+            inputdata.setdefault(username, {})[
+                datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
             p += 1
         p = 1
         for ts in points_pending:
-            inputdata.setdefault(username, {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
+            inputdata.setdefault(username, {})[
+                datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
             p += 1
-
 
     for l in data.split("\n"):
         uid, ps, vps, ivps, ts = l.split(" ")
@@ -82,13 +89,13 @@ def singlepoints(file, projectid, userid, data):
 
     fig.write_image(file, width=1920, height=1080)
 
+
 def totalpoints(file, projectid, data):
     inputdata = {}
 
     total_submittedstamps = []
     total_validstamps = []
     total_invalidstamps = []
-
 
     for U in data['entries']:
         total_submittedstamps += U['submittedStamps']
@@ -105,15 +112,17 @@ def totalpoints(file, projectid, data):
         p += 1
     p = 1
     for ts in total_validstamps:
-        inputdata.setdefault("validpoints", {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
+        inputdata.setdefault("validpoints", {})[
+            datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
         p += 1
     p = 1
     for ts in total_invalidstamps:
-        inputdata.setdefault("invalidpoints", {})[datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
+        inputdata.setdefault("invalidpoints", {})[
+            datetime.fromtimestamp(ts).replace(microsecond=0, second=0).isoformat()] = p
         p += 1
 
     df = pd.DataFrame.from_dict(inputdata)
-    #df.sort_index(axis=0, inplace=True)
+    # df.sort_index(axis=0, inplace=True)
 
     fig = px.line(df, title=f"Total points over time for Project: {data['projectName']} ({projectid})",
                   labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
@@ -127,36 +136,40 @@ def totalpoints(file, projectid, data):
     fig.write_image(file, width=1920, height=1080)
 
 
-
-def totahourlypower(file, projectid, data):
-    last = {}
+def totalhourlypoints(file, projectid, data):
     inputdata = {}
 
-    for l in data.split("\n"):
-        uid, ps, vps, ivps, ts = l.split(" ")
-        ps = int(ps)
-        vps = int(vps)
-        ivps = int(ivps)
-        ts = int(ts)
+    #############
+    total_submittedstamps = []
+    total_validstamps = []
+    total_invalidstamps = []
 
+    for U in data['entries']:
+        total_submittedstamps += U['submittedStamps']
+        total_validstamps += U['validStamps']
+        total_invalidstamps += U['invalidStamps']
+
+    total_submittedstamps.sort()
+    total_validstamps.sort()
+    total_invalidstamps.sort()
+
+    for ts in total_submittedstamps:
         iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
-        if ps > last.setdefault(uid, {}).setdefault("ps", 0):
-            inputdata.setdefault("points", {}).setdefault(iso, []).append("1")
-        elif vps > last.setdefault(uid, {}).setdefault("vps", 0):
-            inputdata.setdefault("validpoints", {}).setdefault(iso, []).append("1")
-        elif ivps > last.setdefault(uid, {}).setdefault("ivps", 0):
-            inputdata.setdefault("invalidpoints", {}).setdefault(iso, []).append("1")
+        inputdata.setdefault("points", {})[iso] = \
+            (1 if iso is not inputdata.setdefault("points", {}) else inputdata["points"][iso] + 1)
+    for ts in total_validstamps:
+        iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
+        inputdata.setdefault("validpoints", {})[iso] = \
+            (1 if iso is not inputdata.setdefault("validpoints", {}) else inputdata["validpoints"][iso] + 1)
 
-        last[uid]["ps"] = ps
-        last[uid]["vps"] = vps
-        last[uid]["ivps"] = ivps
+    for ts in total_invalidstamps:
+        iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
+        inputdata.setdefault("invalidpoints", {})[iso] = \
+            (1 if iso is not inputdata.setdefault("invalidpoints", {}) else inputdata["invalidpoints"][iso] + 1)
 
-    nl = {}
-    for pt in inputdata.keys():
-        for ht in inputdata[pt].keys():
-            nl.setdefault(pt, {})[ht] = len(inputdata[pt][ht])
+        #############
 
-    df = pd.DataFrame.from_dict(nl)
+    df = pd.DataFrame.from_dict(inputdata)
 
     fig = px.line(df, title=f"Hourly stats over time Project: {projectid}",
                   labels={"index": "Time", "value": "Tasks", "variable": "Info:"})
@@ -169,6 +182,7 @@ def totahourlypower(file, projectid, data):
     fig.update_xaxes(type='date')
 
     fig.write_image(file, width=1920, height=1080)
+
 
 def singlehourlypower(file, projectid, userid, username, data):
     last = {}
