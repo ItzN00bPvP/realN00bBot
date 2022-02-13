@@ -139,7 +139,6 @@ def totalpoints(file, projectid, data):
 def totalhourlypoints(file, projectid, data):
     inputdata = {}
 
-    #############
     total_submittedstamps = []
     total_validstamps = []
     total_invalidstamps = []
@@ -166,8 +165,6 @@ def totalhourlypoints(file, projectid, data):
         iso = datetime.fromtimestamp(ts).replace(microsecond=0, second=0, minute=0).isoformat()
         inputdata.setdefault("invalidpoints", {})[iso] = \
             (1 if iso is not inputdata.setdefault("invalidpoints", {}) else inputdata["invalidpoints"][iso] + 1)
-
-        #############
 
     df = pd.DataFrame.from_dict(inputdata)
 
