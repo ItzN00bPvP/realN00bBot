@@ -30,7 +30,7 @@ def getleaderboardbyid(appid: int):
     return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
 
 def getprogressbyappid(appid: int):
-    r = requests.get(url=f"{microboincapi_endpoint}/projects/{{appid}}", headers=header)
+    r = requests.get(url=f"{microboincapi_endpoint}/projects/{{appid}}/progress", headers=header)
 
     if r.status_code == 200:
         return True, json.loads(str(r.content)[2:-1].replace("\\n", "\n"))
