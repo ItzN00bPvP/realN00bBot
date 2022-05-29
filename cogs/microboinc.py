@@ -241,7 +241,7 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_progress(self, ctx: SlashContext, projectid: int):
-        success, res = microboincapiold.getprogressbyappid(projectid)
+        success, res = microboincapi.getprogressbyappid(projectid)
 
         if not success:
             await ctx.send("Something went wrong:\n" + res)
