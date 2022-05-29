@@ -241,16 +241,14 @@ class Microboinc(commands.Cog):
         )
     ])
     async def _microboinc_progress(self, ctx: SlashContext, projectid: int):
-        await ctx.send("not available yet")
-        return;
         success, res = microboincapiold.getprogressbyappid(projectid)
 
         if not success:
             await ctx.send("Something went wrong:\n" + res)
             return
 
-        await ctx.send(content=f"The process of the Project: {res['Name']}\n"
-                               f"{res['TotalDone']} / {res['TotalGenerated']} ({(res['TotalDone'] / res['TotalGenerated'] * 100) if res['TotalGenerated'] != 0 else 0}%)")
+        await ctx.send(content=f"The process of the Project: {res['name']}\n"
+                               f"{res['totalDone']} / {res['totalGenerated']} ({(res['totalDone'] / res['totalGenerated'] * 100) if res['totalGenerated'] != 0 else 0}%)")
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_multipoints, base="microboinc", name="stats-multipoints",
                             options=[

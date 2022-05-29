@@ -29,6 +29,14 @@ def getleaderboardbyid(appid: int):
         return False, "App not found!"
     return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
 
+def getprogressbyappid(appid: int):
+    r = requests.get(url=f"{miniboincapi_host}/projects/{{appid}}", headers=header)
+
+    if r.status_code == 200:
+        return True, json.loads(str(r.content)[2:-1].replace("\\n", "\n"))
+    elif r.status_code == 404:
+        return False, "App not found!"
+    return False, "<@374245848659263488> something went wrong code: " + str(r.status_code)
 
 def gethistleaderboardbyid(appid: int):
     r = requests.get(url=f"{microboincapi_endpoint}/leaderboards/byproject/{appid}/historical", headers=header)
