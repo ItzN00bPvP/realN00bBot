@@ -3,7 +3,7 @@ import plotly.express as px
 from datetime import datetime
 
 
-def multipower(file, projectid, data):
+def multipoints(file, projectid, data):
     inputdata = {}
 
     for U in data['entries']:

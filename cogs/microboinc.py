@@ -252,7 +252,7 @@ class Microboinc(commands.Cog):
         await ctx.send(content=f"The process of the Project: {res['Name']}\n"
                                f"{res['TotalDone']} / {res['TotalGenerated']} ({(res['TotalDone'] / res['TotalGenerated'] * 100) if res['TotalGenerated'] != 0 else 0}%)")
 
-    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_totalpoints, base="microboinc", name="stats-totalpoints",
+    @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_multipoints, base="microboinc", name="stats-multipoints",
                             options=[
                                 create_option(
                                     name="projectid",
@@ -261,7 +261,7 @@ class Microboinc(commands.Cog):
                                     required=True
                                 )
                             ])
-    async def _microboinc_stats_totalpoints(self, ctx: SlashContext, projectid: int):
+    async def _microboinc_stats_multipoints(self, ctx: SlashContext, projectid: int):
         fname = f'{rootdir}/stats/{int(time())}_stats-multipoints-{projectid}.png'
         m = await ctx.send("Please wait a moment, it can take a while to generate the Image.")
         success, res = microboincapi.gethistleaderboardbyid(projectid)
@@ -274,7 +274,7 @@ class Microboinc(commands.Cog):
             await m.edit(content="There is not data yet!")
             return
 
-        stats.totalpoints(fname, projectid, res)
+        stats.multipoints(fname, projectid, res)
         await m.edit(content=f"Total points stats for Project: {projectid}", files=[discord.File(fname)])
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_singlepoints, base="microboinc", name="stats-singlepoints",
