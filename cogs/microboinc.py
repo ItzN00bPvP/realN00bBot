@@ -247,7 +247,7 @@ class Microboinc(commands.Cog):
             await ctx.send("Something went wrong:\n" + res)
             return
 
-        await ctx.send(content=f"The process of the Project: {res['name']}\n"
+        await ctx.send(content=f"The progress of the Project: {res['name']}\n"
                                f"{res['totalDone']} / {res['totalGenerated']} ({(res['totalDone'] / res['totalGenerated'] * 100) if res['totalGenerated'] != 0 else 0}%)")
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_stats_multipoints, base="microboinc", name="stats-multipoints",
