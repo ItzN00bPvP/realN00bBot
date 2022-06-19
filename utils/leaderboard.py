@@ -24,7 +24,7 @@ def graph(file, projectid, data: json):
         inputdata.append([username, points_valid, pending, points_invalid])
 
     df = pd.DataFrame(inputdata, columns=["User", "good", "pending", "bad"])
-    df = df.sort_values(by=["good"])
+    df = df.sort_values(by=["good", "pending"])
     fig = px.bar(df, title=f"Leaderboard for Project {data['projectName']} ({projectid})", orientation='h', y='User',
                  x=['good', 'pending', 'bad'], labels=dict(index="Users", value="Tasks", variable="Task stats"))
 
