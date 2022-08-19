@@ -59,7 +59,7 @@ def pie(file, projectid, data: json):
 
     df = pd.DataFrame(inputdata, columns=["User", "good", "pending", "bad"])
     df = df.sort_values(by=["good", "pending"])
-    fig = px.pie(df, title=f"Leaderboard for Project {data['projectName']} ({projectid})",  values=['good', 'pending', 'bad'], labels=dict(index="Users", value="Tasks", variable="Task stats"))
+    fig = px.pie(df, title=f"Leaderboard for Project {data['projectName']} ({projectid})",  values='good', labels=dict(index="Users", value="Tasks", variable="Task stats"))
 
     #fig._data[0]["marker"]['color'] = "rgba(43, 158, 0, 1)"
     #fig._data[1]["marker"]['color'] = "rgba(0, 149, 166, 1)"
