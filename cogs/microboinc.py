@@ -191,22 +191,6 @@ class Microboinc(commands.Cog):
                 return
 
             leaderboard.pie(fname, projectid, res)
-            #await ctx.send("Not implemented yet!")
-            #return
-
-        success, res = microboincapi.getleaderboardbyid(projectid)
-
-        if not success:
-            await ctx.send(res)
-            return
-
-        if not res["entries"]:
-            await ctx.send("There is not data yet!")
-            return
-
-        leaderboard.graph(fname, projectid, res)
-
-
 
         await ctx.send(content=f"The current Leaderboard for Project: {projectid}", files=[discord.File(fname)])
 
@@ -265,8 +249,6 @@ class Microboinc(commands.Cog):
                 return
 
             leaderboard.pie(fname, projectid, res)
-            #await ctx.send("Not implemented yet!")
-            #return
         await ctx.send(content=f"The current Leaderboard from {user.mention} for Project: {projectid}", files=[discord.File(fname)])
 
     @cog_ext.cog_subcommand(guild_ids=config.slash_mb_progress, base="microboinc", name="progress", options=[
