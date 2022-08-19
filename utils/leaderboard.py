@@ -68,4 +68,4 @@ def pie(file, projectid, data: json):
 
     fig.update_layout(annotations=ano, plot_bgcolor='rgba(33, 40, 51, 1)', paper_bgcolor='rgba(33, 40, 51, 1)',
                       font_color='rgba(196, 222, 255, 1)', font_size=24)
-    fig.write_image("./test.png", width=1920, height=1080)
+    fig.write_image(file, width=1920, height=1080)
